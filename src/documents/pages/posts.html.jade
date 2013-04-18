@@ -4,9 +4,11 @@ layout: page
 pageOrder: 2
 ---
 
-nav.linklist
-  each doc in getCollection('posts').toJSON()
-    li
-      span= doc.date.toDateString()
-      |  &raquo;&nbsp;
-      a(href=doc.url)= doc.title
+each doc in getCollection('posts').toJSON()
+	div(class='media', style='width: 100%; float: left; padding: 10px;')
+		div(class='media-body')
+			h4(class='media-heading'): a(href= doc.url)= doc.title
+		a(class='pull-left', href='#')
+			img(class='media-object', src= (doc.kdpv))
+		div(class='media')
+			text= doc.intro
