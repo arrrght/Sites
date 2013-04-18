@@ -1,0 +1,274 @@
+<!DOCTYPE html><html lang="en"><head><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Ext4. NodeJS. Login. | Your Website</title><meta name="description" content="When your website appears in search results in say Google, the text here will be shown underneath your website's title."><meta name="keywords" content="place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website"><meta name="author" content="Your Name"><meta http-equiv="X-Powered-By" content="DocPad"/><meta name="viewport" content="width=device-width"><!-- Icons--><link rel="shortcut icon" href="ico/favicon.ico"><link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png"><link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png"><!--[if lt IE 9]><script async src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]--><!-- Styles--><link  rel="stylesheet" href="/vendor/prettify.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap-responsive.css" /><link  rel="stylesheet" href="/styles/style.css" /></head><body><!-- Markup--><div class="navbar navbar-fixed-top"><div class="navbar-inner"><div class="container"><a href="/" class="brand">Welcome</a><ul class="nav"><li typeof="sioc:Page" about="/pages/hello"><a href="/pages/hello" property="dc:title">This is a Page</a></li><li typeof="sioc:Page" about="/pages/posts"><a href="/pages/posts" property="dc:title">Posts</a></li></ul></div></div></div><div class="container"><section id="content" class="content"><article id="post" class="post"><h1>Ext4. NodeJS. Login.</h1><div class="post-content"><p>Создаем окно входа используя Ext4, NodeJS, Express, Cucumis, MongoDB. Постараемся уменьшить количество кода.
+Так же попробуем частично объединить серверную и клиентскую части кода и протестировать их в cucumis.
+<img src="/images/2011-05-23-1.png" /></p>
+<p>Готовые исходники лежат на <a href="https://github.com/arrrght/h2e4-show-1">GitHub</a></p>
+<p>Лучше сразу смотреть там, я буду давать ссылки на эти исходники и комментировать по мере прохождения.</p>
+<ul>
+<li>По мотивам<ul>
+<li><a href="http://node-js.ru/14-test-express-app-using-cucumis">Test express app using cucumis</a></li>
+<li><a href="http://docs.sencha.com/ext-js/4-0/#/api/Ext.app.Application">Ext4 MVC</a></li>
+</ul>
+</li>
+</ul>
+<p>Создаем каталог и структуру</p>
+<pre><code>mkdir h2e4-show-1 &amp;&amp; cd h2e4-show-1
+express -s -t ejs
+   create : .
+   create : ./app.js
+   create : ./pids
+   create : ./public/images
+   create : ./public/javascripts
+   create : ./public/stylesheets
+   create : ./public/stylesheets/style.css
+   create : ./logs
+   ...</code></pre>
+<p>Создаем структуру в каталоге app -&gt; controller, model, store и view. Убираем лишнее.</p>
+<pre><code>$ mkdir lib &amp;&amp; rm -R ./views
+$ mkdir features
+$ mkdir features/step_definitions
+$ ln -s ~/Library/mylibs/ext-4.0.0 public/ext4
+$ mkdir app &amp;&amp; cd app
+$ mkdir controller model store view
+$ cd ..</code></pre>
+<p>Прибираемся в <a href="https://github.com/arrrght/h2e4-show-1/blob/master/app.js">app.js</a> и подключаем mongo в качестве базу для хранения сессий:</p>
+<pre><code>var app = module.exports = express.createServer(),
+    mongoStore = require(&#39;connect-mongodb&#39;);
+
+app.use(express.session({ secret: &#39;your secret here&#39;,
+  store: mongoStore({ dbname: &#39;tst01&#39; }) }));</code></pre>
+<p>После конфигурации подключаем файл <a href="https://github.com/arrrght/h2e4-show-1/blob/master/lib/h2e4.js">h2e4.js</a></p>
+<p>Далее описываем как будет проходить процесс авторизации:</p>
+<pre><code>function restrictUnauthorized(req, res, next){
+  console.log(&#39;* User: &#39; + req.session.user);
+  req.session.user_id ? next() : res.redirect(&#39;/login&#39;);
+};
+
+app.get(&#39;/login&#39;, function(req, res){
+  res.render(&#39;Login.html&#39;);
+});
+
+app.get(&#39;/logout&#39;, function(req, res){
+  delete req.session.user_id;
+  res.redirect(&#39;/&#39;);
+});
+
+app.get(&#39;/&#39;, restrictUnauthorized, function(req, res){
+  res.render(&#39;Application.html&#39;);
+});</code></pre>
+<ul>
+<li>01-04 Функция restrictUnauthorized ограничивает анонимов только приложением Login</li>
+<li>06-08 Показываем приложение Login на путь /login</li>
+<li>10-13 При /logout просто чистим сиссию и перенаправляем на /login</li>
+<li>15-17 Авторизованные идут в основное приложение</li>
+</ul>
+<p>Т.е. на самом деле у нас два Ext4 MVC приложения - одно для логина(Login) и одно основное(App)</p>
+<p>Так, начнем мы с Login.</p>
+<p>Рассмотрим файл <a href="https://github.com/arrrght/h2e4-show-1/blob/master/app/Login.html">app/Login.html</a>:</p>
+<pre><code>&lt;html&gt;
+  &lt;head&gt;
+    &lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;/&gt;
+    &lt;link rel=&#39;stylesheet&#39; href=&#39;/ext4/resources/css/ext-all.css&#39;/&gt;
+    &lt;script type=&#39;text/javascript&#39; src=&#39;/ext4/bootstrap.js&#39;&gt;&lt;/script&gt;
+    &lt;script type=&#39;text/javascript&#39; src=&#39;/direct/api&#39;&gt;&lt;/script&gt;
+    &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
+      Ext.Loader.setConfig({ enabled: true, disableCaching: false,
+        paths: { &#39;App&#39;: &#39;/app&#39;, &#39;Ext&#39;: &#39;/ext4/src&#39; } });
+      Ext.application({ name: &#39;Login&#39;, controllers: [ &#39;Login&#39; ] });
+    &lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<ul>
+<li>05 Здесь подключаем наш Ext4 Direct API</li>
+<li>08-10 Описываем где лежит наше приложение, а где струкура</li>
+</ul>
+<p>Далее, пишем <a href="https://github.com/arrrght/h2e4-show-1/blob/master/app/view/Viewport.js">Viewport</a>, он у нас один на двоих, на самом деле </p>
+<pre><code>Ext.define(&#39;Login.view.Viewport&#39;, {
+    extend: &#39;Ext.window.Window&#39;,
+
+    initComponent: function() {
+      Ext.apply(this, {
+        autoShow: true,
+        title: &#39;Login window&#39;,
+        width: 350, autoHeight: true,
+        closable: false, resizable: false, bodyStyle: &#39;background-color:#DFE8F6; padding: 5px;&#39;,
+        items: Ext.create(&#39;Ext.form.FormPanel&#39;, {
+          border: false, bodyStyle: &#39;background-color:#DFE8F6;&#39;, 
+          api: { submit: Login.login },
+          buttons: [{ text: &#39;Login&#39;, action: &#39;login&#39; }],
+          defaultType: &#39;textfield&#39;,
+          defaults: { anchor: &#39;100%&#39;, allowBlank: false, msgTarget: &#39;side&#39; },
+          items: [
+            { name: &#39;username&#39;, fieldLabel: &#39;User&#39; },
+            { name: &#39;password&#39;, fieldLabel: &#39;Password&#39;, inputType: &#39;password&#39; }
+          ]
+        })
+      });
+      this.callParent(arguments);
+    }
+});
+
+Ext.define(&#39;App.view.Viewport&#39;, {
+    extend: &#39;Ext.container.Viewport&#39;,
+
+    initComponent: function() {
+      Ext.apply(this, {
+        layout: &#39;fit&#39;,
+        items: {
+          xtype: &#39;panel&#39;,
+          html: &#39;It\&#39;s a private area, &lt;%%= session.user %&gt;.&#39;
+        }
+      });
+      this.callParent(arguments);
+    }
+});</code></pre>
+<ul>
+<li>01-24 Рисуем окно входа - никаких обработок не делаем, ничего интересного, просто окно с двумя полями и кнопка</li>
+<li>13 Здесь мы определяем кто будет обрабатывать нашу форму: конкретно - Login.login, сейчас мы опишем его в контроллере</li>
+<li>26-39 Пустое окно с приветствием &quot;Private area&quot;, здесь вообще ничего нет</li>
+</ul>
+<p>Далее пишем контроллер <a href="https://github.com/arrrght/h2e4-show-1/blob/master/app/controller/Login.js">Login</a>:</p>
+<pre><code>Ext.define(&#39;Login.controller.Login&#39;, {
+  extend: &#39;Ext.app.Controller&#39;,
+
+  models: [ &#39;User&#39; ],
+
+  init: function(){
+    this.control({
+      &#39;button[action=login]&#39;: {
+        click: this.onLoginClick
+      }
+    })
+  },
+
+  onLoginClick: function(btn, e){
+    var form = btn.up(&#39;form&#39;);
+    // Call endpoint (defined in view(Viewport/FormPanel)
+    // as DirectAPI: &quot;api: { submit: Login.login }&quot; )
+    form.submit({
+      success: function(){
+        window.location = &#39;/&#39;;
+      }
+    });
+  }
+});
+
+// Server side code
+Ext.endpoint(&#39;login&#39;, function(para){ //:: { &quot;formHandler&quot;: &quot;true&quot; }
+                                      // ^^^ look at this comment
+  var ret = this,
+      User = Mongoose.model(&#39;User&#39;);
+
+  // Call mongoose model &#39;auth&#39;
+  User.auth(para.username, para.password, function(user){
+    if (user){
+      // If auth success, set session var and return login
+      ret.app.req.session.user_id = user.id;
+      ret.app.req.session.user = user.login;
+      ret.success({ login: user.login, id: user.id });
+    }else{
+      // If fails - say it
+      ret.failure({ username: &#39;User not found!&#39; });
+    }
+  });
+
+  // Create one user with password if not exist
+  User.findOne({ login: &#39;user&#39;}, function(err, user){
+    if (!user){
+      // Look at password magic in model
+      new User({ login: &#39;user&#39;, password: &#39;pass&#39; }).save();
+    }
+  });
+});</code></pre>
+<p>Вот. Здесь интереснее:</p>
+<ul>
+<li>01-24  Сам контроллер, клиентская часть </li>
+<li>04 - Подключаем модель &quot;User&quot;:<a href="https://github.com/arrrght/h2e4-show-1/blob/master/app/model/user.js">https://github.com/arrrght/h2e4-show-1/blob/master/app/model/user.js</a></li>
+<li>18-22 Отлавливаем нажатие кнопки, отправляем серверу и если все хорошо делаем редирект на корень</li>
+<li>27-52 Серверная часть</li>
+<li>27 Описание точки входа, в комментах пишем что это обработчик формы</li>
+<li>33-43 Вызываем функцию auth, которая задается в модели(скоро дойдем и до нее), и если все хорошо, то возвращаем клиенту login и id, если нет - маппим на поле username ошибку. Ext4 сам разберется что с ней делать.</li>
+<li>46-51 Создем юзера с логином user и паролем pass (так, на всякий случай, чтобы не лазить в mongo лишний раз)</li>
+</ul>
+<p>И, напоследок, модель <a href="https://github.com/arrrght/h2e4-show-1/blob/master/app/model/user.js">User</a></p>
+<pre><code>// Code for ext4
+Ext.define(&#39;Login.model.User&#39;, {
+  extend: &#39;Ext.data.Model&#39;,
+
+  fields: [
+    { name: &#39;login&#39;, type: &#39;string&#39; },
+    { name: &#39;password&#39;, type: &#39;string&#39; },
+  ]
+
+});
+
+// Code for Mongoose
+var Schema = Mongoose.Schema,
+    crypto = require(&#39;crypto&#39;),
+    ObjectId = Schema.ObjectId,
+    Query = Mongoose.Query,
+    userFields = Ext.getModel(&#39;User&#39;);
+
+/* We can define whole shema
+var User = new Schema({
+  login: String,
+  pswd: { salt: String , hash: String }
+});
+*/
+
+// .. or just change some fields
+delete userFields.password; // virtual it
+userFields.pswd = { salt: String , hash: String };
+
+var User = new Schema(userFields);
+
+// virtual field
+User.virtual(&#39;password&#39;)
+  .set(function(pass){
+    var salt = (function getSalt(){
+      var str = &#39;&#39;,
+          chars = &#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz&#39;.split(&#39;&#39;);
+
+      chars.forEach(function(){ str += chars[Math.floor(Math.random() * chars.length)] });
+      return str;
+    })();
+    this.set(&#39;pswd.salt&#39;, salt);
+    this.set(&#39;pswd.hash&#39;, getCrypted(salt, pass));
+  })
+  .get(function(){
+    return this.pswd.hash
+  });
+
+function getCrypted(salt, pass){
+  return crypto.createHmac(&#39;sha1&#39;, salt).update(pass).digest(&#39;hex&#39;)
+};
+
+User.static({
+  auth: function(login, password, callback){
+    this.findOne({ login: login }, function(err, user){
+      if (user &amp;&amp; user.password === getCrypted(user.pswd.salt, password)){
+        callback(user);
+      }else{
+        callback(null);
+      }
+    });
+  }
+});
+
+// Register model at last
+Mongoose.model(&#39;User&#39;, User);</code></pre>
+<p>Здесь еще интереснее, вкусности mongodb в действии:</p>
+<ul>
+<li>01-10 Клиентская часть модели</li>
+<li>19-30 Описание серверной части модели для mongo. Можно как воспользоваться автоматическим преобразованием полей(простейщим &#39;string&#39;-&gt;String, &#39;float&#39;-&gt;Number), или создать с самомго начала базу для mongo. Скажем так: если модель простейшая, то серверная часть не пишется вообще. (PS: Хотя нет, все-таки придется сделать Mongoose.model(&#39;User&#39;, new Schema(userFields)); ) - подумаю как сделать даже без этого, не потеряв в гибкости.</li>
+<li>32-46 Храним правильно пароль, для этого делаем виртуальное поле password, которое hash&#39;им до потери пульса. Для этого раздваиваем поле с паролем, каждый раз генерим хеш заново и храним вместе с хешированным паролем. Кажется, так правильно.</li>
+<li>52-62 Процедура для аутентификации, возвращающая null если не ничего нет и user если все совпало.</li>
+</ul>
+<p>Вот, по сути и все описание. Я постарался максимально комментировать исходники. В процессе создания библиотека h2e4.js (Helpers For Ext4) будет прирастать новым функционалом. Очень хочется сделать сделать общую <a href="http://mongoosejs.com/docs/validation.html">валидацию</a>.</p>
+<p>Тестирование.</p>
+<p>На самом деле, все надо делать еще в процессе создания программы, чем надеюсь Вы дальше и займетесь.</p>
+<p>Запускаем </p>
+<pre><code>java -jar selenium-server-standalone-2.0b3.jar</code></pre>
+<p>... Не дописал тесты. Напишу в следующий раз.</p>
+<p><em>PS: на дворе 2013 год, тесты так и не написал.</em></p>
+</div></article><footer><section id="related"><h3>Related Posts</h3><nav class="linklist"><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/gentoo-softraid-lvm-kvm-1c">Установка 1С под линукс в госте</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/hello">This is a Blog Post</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/mailserver">Linux, RAID, LVM, почта и LDAP (5-в-одном)</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/netzke-cucumber-selenium">Автотесты Netzke в браузере</a></li></nav></section></footer></section><hr><footer><div>© Your Company 2012</div><div style="font-style:italic; font-size: 12px">This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))</div></footer></div><!-- Scripts--><script defer="defer"  src="/vendor/prettify.js"></script><script defer="defer"  src="/vendor/jquery.js"></script><script defer="defer"  src="/vendor/twitter-bootstrap/js/bootstrap.js"></script><script defer="defer"  src="/vendor/log.js"></script><script defer="defer"  src="/vendor/modernizr.js"></script><script defer="defer"  src="/scripts/script.js"></script></body></html>

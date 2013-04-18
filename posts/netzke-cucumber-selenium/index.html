@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="en"><head><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Автотесты Netzke в браузере | Your Website</title><meta name="description" content="When your website appears in search results in say Google, the text here will be shown underneath your website's title."><meta name="keywords" content="place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website"><meta name="author" content="Your Name"><meta http-equiv="X-Powered-By" content="DocPad"/><meta name="viewport" content="width=device-width"><!-- Icons--><link rel="shortcut icon" href="ico/favicon.ico"><link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png"><link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png"><!--[if lt IE 9]><script async src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]--><!-- Styles--><link  rel="stylesheet" href="/vendor/prettify.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap-responsive.css" /><link  rel="stylesheet" href="/styles/style.css" /></head><body><!-- Markup--><div class="navbar navbar-fixed-top"><div class="navbar-inner"><div class="container"><a href="/" class="brand">Welcome</a><ul class="nav"><li typeof="sioc:Page" about="/pages/hello"><a href="/pages/hello" property="dc:title">This is a Page</a></li><li typeof="sioc:Page" about="/pages/posts"><a href="/pages/posts" property="dc:title">Posts</a></li></ul></div></div></div><div class="container"><section id="content" class="content"><article id="post" class="post"><h1>Автотесты Netzke в браузере</h1><div class="post-content"><p>Создание начальной оболочки для тестирования формы входа. Написана с высоты двухнедельного изучения ruby и Netzke. Сдалано топорно.
+<img src="/images/2011-02-16-1.png" /></p>
+<p>По мотивам</p>
+<ul>
+<li><a href="http://blog.writelesscode.com/blog/2011/01/27/testing-extjs-rails-components-with-cucumber-and-webdriver-in-netzke/">Testing Ext JS/Rails components with Cucumber and WebDriver in Netzke</a></li>
+<li><a href="http://habrahabr.ru/blogs/webdev/111480">Rails - Хватит отмазываться, начинаем BDD-ить!</a></li>
+</ul>
+<p>Весь код примера доступен на <a href="https://github.com/arrrght/netzke-test-1">GitHub</a></p>
+<p>Создаем новый проект</p>
+<pre><code>$ rails new netzke-test-1
+    create  
+    create  README
+    create  Rakefile
+    create  config.ru
+    create  .gitignore
+    ...
+$ cd netzke-test-1</code></pre>
+<p>Добавляем gems в файл Gemfile:</p>
+<pre><code>source &#39;http://rubygems.org&#39;
+
+gem &#39;rails&#39;, &#39;3.0.3&#39;
+
+gem &#39;sqlite3-ruby&#39;, :require =&gt; &#39;sqlite3&#39;
+gem &#39;netzke-core&#39;, :git =&gt; &quot;git://github.com/skozlov/netzke-core.git&quot;
+gem &#39;netzke-basepack&#39;, :git =&gt; &quot;git://github.com/skozlov/netzke-basepack.git&quot;
+gem &#39;will_paginate&#39;
+
+group :development, :test do
+  gem &quot;cucumber-rails&quot;
+  gem &quot;rspec-rails&quot;
+end
+
+group :test do
+  gem &quot;capybara&quot;
+  gem &quot;launchy&quot;
+  gem &quot;database_cleaner&quot;
+  gem &quot;selenium-webdriver&quot;
+end</code></pre>
+<p>... и устанавливаем их:</p>
+<pre><code>$ bundle install
+Updating git://github.com/skozlov/netzke-core.git
+Updating git://github.com/skozlov/netzke-basepack.git
+Fetching source index for http://rubygems.org/
+Using rake (0.8.7) 
+Using abstract (1.0.0) 
+Using activesupport (3.0.3) 
+Using builder (2.1.2) 
+...</code></pre>
+<p>Делаем линки на скаченные библиотеки <a href="http://www.sencha.com/products/extjs/download/">ExtJS</a> и <a href="http://www.famfamfam.com/lab/icons/silk/">иконки</a>:</p>
+<pre><code>$ ln -s ~/Library/mylibs/ext-3.3.1 public/extjs
+$ ln -s ~/Library/mylibs/famfamfam_silk_icons_v013/icons public/images/</code></pre>
+<p>Добавляем в <code>/app/views/layout/application.rb</code></p>
+<pre><code>&lt;head&gt;
+  &lt;title&gt;NetzkeTest1&lt;/title&gt;
+  &lt;%%= netzke_init %&gt;
+  &lt;%%= csrf_meta_tag %&gt;
+&lt;/head&gt;</code></pre>
+<p>Генерим оболочку:</p>
+<pre><code>$ rails g rspec:install
+$ rails g cucumber:install --rspec --capybara</code></pre>
+<p>Делаем чтобы тесты выполнялись красиво:</p>
+<pre><code>$ echo &#39;--colour --format documentation&#39; &gt; .rspec
+$ sed -i~ &#39;s/progress/pretty/g&#39; config/cucumber.yml</code></pre>
+<p>Прописываем драйвер в тесты, для этого вписываем в <code>features/support/env.rb</code> следующие строки:</p>
+<pre><code>Capybara.register_driver :selenium do |app|
+  Capybara::Driver::Selenium.new app, :browser =&gt; :chrome
+end</code></pre>
+<p>Пишем фичу в файле <code>features/login.feature</code></p>
+<pre><code>Feature: Check login window
+In order to value
+As a role
+I want feature
+
+@javascript
+Scenario: Check window properties (and button Enter should be disabled by default)
+  Given I am on the login page
+  Then I should see &quot;Login window&quot;
+  And I should see &quot;User&quot;
+  And I should see &quot;Password&quot;
+  Then button &quot;Enter&quot; should be disabled
+  When I fill in &quot;username&quot; with &quot;some&quot;
+  And I fill in &quot;password&quot; with &quot;somepass&quot;
+  And I sleep 1 seconds
+  Then button &quot;Enter&quot; should be enabled
+
+@javascript
+Scenario: Check login
+  Given I have a user named &quot;user1&quot; with password &quot;pass1&quot;
+  And I am on the login page
+  When I fill in &quot;username&quot; with &quot;wrong_user&quot;
+  And I fill in &quot;password&quot; with &quot;wrong_password&quot;
+  And I press &quot;Enter&quot;
+  When I wait for the response from the server
+  And I sleep 1 seconds
+  Then I should see &quot;Wrong!&quot;
+  When I fill in &quot;username&quot; with &quot;user1&quot;
+  And I fill in &quot;password&quot; with &quot;pass1&quot;
+  And I press &quot;Enter&quot;
+  When I wait for the response from the server
+  And I sleep 1 seconds
+  Then I should see &quot;Hello, user1!&quot;</code></pre>
+<p>Что мы делаем:</p>
+<p>В первом сценарии мы проверяем окно, которое должно появится, два поля и отключенная кнопка &quot;Enter&quot;, которая должна включится только если в первом и во втором поле что-либо есть.</p>
+<p>И второй сценарий - при верных параметрах мы попадаем на страницу приветствия пользователя, а при неверных - сообщение об ошибке.</p>
+<p>PS: Тест написано криво и его надо причесать, но для примера пойдет.</p>
+<p>PPS: Понаставил пауз потому как не знаю как же дожидаться выполнения работы JS.</p>
+<p>Запускаем тест <code>cucumber features</code> и видим кучу ошибок. Самая первая из них:</p>
+<pre><code>Can&#39;t find mapping from &quot;the login page&quot; to a path.</code></pre>
+<p>Генерируем контроллер и добавляем <code>action index</code></p>
+<pre><code>$ rails g controller login index
+    create  app/controllers/login_controller.rb
+    invoke  erb
+    create    app/views/login
+    ...</code></pre>
+<p>Добавляем default route к нашей странице в файле <code>config/routes.rb</code></p>
+<pre><code>netzke
+match &quot;login&quot; =&gt; &quot;login#index&quot;</code></pre>
+<p>Запускаем наш тест и видим, что он запнулся на том, что не видит окно.</p>
+<pre><code>Then I should see &quot;Login window&quot;</code></pre>
+<p>Это нормально, потому что мы его еще не написали.
+Теперь рисуем наше окно для входа в файле <code>app/views/login/index.html.erb</code></p>
+<pre><code>&lt;%%= netzke :login %&gt;</code></pre>
+<p>И сам компонент. Для этого создаем католог <code>app/components</code> и файл <code>app/components/login.rb</code>:</p>
+<pre><code># coding: utf-8
+class Login &lt; Netzke::Base
+
+  js_base_class &#39;Ext.Window&#39;
+
+  def configuration
+    super.merge(
+      :title =&gt; &#39;Login window&#39;,
+      :hidden =&gt; false,
+      :width =&gt; 350, :autoHeight =&gt; true,
+      :closable =&gt; false, :resizable =&gt; false,
+      :items =&gt; [{
+        :buttons =&gt; [ :login.action ],
+        :xtype =&gt; :form,
+        :frame =&gt; true,
+        :defaultType =&gt; :textfield,
+        :monitorValid =&gt; true,
+        :defaults =&gt; { :anchor =&gt; &#39;100%&#39;, :allowBlank =&gt; false },
+        :items =&gt; [{
+          :name =&gt; &#39;username&#39;,
+          :fieldLabel =&gt; &#39;User&#39;
+        },{
+          :name =&gt; &#39;password&#39;,
+          :fieldLabel =&gt; &#39;Password&#39;,
+          :inputType =&gt; :password
+        }]
+      }]
+    )
+  end
+
+  action :login, :text =&gt; &#39;Enter&#39;, :icon =&gt; :accept, :formBind =&gt; true
+
+  js_method :on_login, &lt;&lt;-JS.l
+    function(){
+      var form = this.items.first().getForm();
+      if (form.isValid()){
+        this.login(form.getFieldValues());
+      }
+    }
+  JS
+
+  endpoint :login do |para|
+    user = User.find(:first, :conditions =&gt; {
+      :login =&gt; para[&#39;username&#39;],
+      :password =&gt; para[&#39;password&#39;]
+    })
+    session[:user_id] = user.id unless user.nil?
+    { :get_answer =&gt; !user.nil?  }
+  end
+
+  js_method :get_answer, &lt;&lt;-JS.l
+    function (ret){
+      if (ret == false) {
+        Ext.Msg.alert(&#39;Wrong!&#39;,&#39;Wrong username or password&#39;);
+      }else{
+        window.location = &#39;/users&#39;;
+      }
+    }
+  JS
+  end</code></pre>
+<ul>
+<li>Строки 6-29: Описание окна.</li>
+<li>Строка 31: Добавление action типа &quot;кнопка&quot; и привязывание к форме</li>
+<li>Строки 33-40: Отправка формы на сервер</li>
+<li>Строки 42-50: Проверка пароля на строне сервера (так делать нельзя - это только пример)</li>
+<li>Строки 52-60: Приемка ответа от сервера и решения что же дальше</li>
+</ul>
+<p>Теперь cucumber ругается на непонятный ему шаг:</p>
+<pre><code>Undefined step: &quot;button &quot;Enter&quot; should be disabled&quot; (Cucumber::Undefined)</code></pre>
+<p>Отлично! Так давайте его и напишем в файле <code>features/step_definitions/my_netzke_steps.rb</code>:</p>
+<pre><code>Then /^button &quot;([^&quot;]*)&quot; should be enabled$/ do |arg1|
+  page.driver.browser.execute_script(&lt;&lt;-JS).should == true
+    var btn = Ext.ComponentMgr.all.filter(&#39;text&#39;, &#39;#{arg1}&#39;).filter(&#39;type&#39;,&#39;button&#39;).first();
+  return typeof(btn)!=&#39;undefined&#39; ? !btn.disabled : false
+  JS
+end
+
+Then /^button &quot;([^&quot;]*)&quot; should be disabled$/ do |arg1|
+  page.driver.browser.execute_script(&lt;&lt;-JS).should == true
+    var btn = Ext.ComponentMgr.all.filter(&#39;text&#39;, &#39;#{arg1}&#39;).filter(&#39;type&#39;,&#39;button&#39;).first();
+    return typeof(btn)!=&#39;undefined&#39; ? btn.disabled : false
+  JS
+end</code></pre>
+<p>У нас готов первый полностью пройденный сценарий, на котором мы проверям окно входа и неактивную кнопку. Идем дальше. </p>
+<pre><code>Undefined step: &quot;I have a user named &quot;user1&quot; with password &quot;pass1&quot;&quot;</code></pre>
+<p>Система не знает как сделать пользователя - так подскажем, как это делается. Добавляем описание этого шага в <code>features/step_definitions/my_netzke_steps.rb</code></p>
+<pre><code>Given /^I have a user named &quot;([^&quot;]*)&quot; with password &quot;([^&quot;]*)&quot;$/ do |arg1, arg2|
+  User.create!( :login =&gt; arg1, :password =&gt; arg2 )
+end</code></pre>
+<p>OMG! У нас нет модели! Cucumber говорит что <code>uninitialized constant User (NameError)</code>. Создадим:</p>
+<pre><code>$ rails g model User login:string password:string
+    invoke  active_record
+    create    db/migrate/20110214075142_create_users.rb
+    create    app/models/user.rb
+    invoke    rspec
+    create      spec/models/user_spec.rb
+$ rake db:migrate
+$ rake db:test:prepare
+...</code></pre>
+<p>Осталось два последних шага, которых не понимает cucumber: <code>When I wait for the response from the server</code> и <code>I sleep (\d+) seconds</code>. Напишем их в <code>features/step_definitions/my_netzke_steps.rb</code></p>
+<pre><code>When /^I wait for the response from the server$/ do
+  page.wait_until{ page.driver.browser.execute_script(&quot;return !Ext.Ajax.isLoading();&quot;) }
+end
+
+When /I sleep (\d+) seconds?/ do |arg1|
+  sleep arg1.to_i
+end</code></pre>
+<p>И наконец-то cucumber наткнулся <code>Then I should see &quot;Hello, user1!&quot;</code> на нашу последнюю недописанную часть - то, что должно появится после входа в систему. Для этого создадим котроллер <code>users</code>, в котором приветствуем пользователя:</p>
+<pre><code>$ rails g controller users index</code></pre>
+<p>И default route <code>config/routes.rb</code></p>
+<pre><code>match &quot;users&quot; =&gt; &quot;users#index&quot;</code></pre>
+<p>И напишем в <code>app/views/users/index.html.erb</code>:</p>
+<pre><code>Hello, &lt;%%= User.find(session[:user_id]).login %&gt;!</code></pre>
+<p>Всё. Тесты пройдены - вход работет.</p>
+</div></article><footer><section id="related"><h3>Related Posts</h3><nav class="linklist"><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/ext4-nodejs-login">Ext4. NodeJS. Login.</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/gentoo-softraid-lvm-kvm-1c">Установка 1С под линукс в госте</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/hello">This is a Blog Post</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/mailserver">Linux, RAID, LVM, почта и LDAP (5-в-одном)</a></li></nav></section></footer></section><hr><footer><div>© Your Company 2012</div><div style="font-style:italic; font-size: 12px">This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))</div></footer></div><!-- Scripts--><script defer="defer"  src="/vendor/prettify.js"></script><script defer="defer"  src="/vendor/jquery.js"></script><script defer="defer"  src="/vendor/twitter-bootstrap/js/bootstrap.js"></script><script defer="defer"  src="/vendor/log.js"></script><script defer="defer"  src="/vendor/modernizr.js"></script><script defer="defer"  src="/scripts/script.js"></script></body></html>

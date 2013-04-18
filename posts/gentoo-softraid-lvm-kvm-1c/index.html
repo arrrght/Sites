@@ -1,0 +1,299 @@
+<!DOCTYPE html><html lang="en"><head><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Установка 1С под линукс в госте | Your Website</title><meta name="description" content="When your website appears in search results in say Google, the text here will be shown underneath your website's title."><meta name="keywords" content="place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website"><meta name="author" content="Your Name"><meta http-equiv="X-Powered-By" content="DocPad"/><meta name="viewport" content="width=device-width"><!-- Icons--><link rel="shortcut icon" href="ico/favicon.ico"><link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png"><link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png"><!--[if lt IE 9]><script async src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]--><!-- Styles--><link  rel="stylesheet" href="/vendor/prettify.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap-responsive.css" /><link  rel="stylesheet" href="/styles/style.css" /></head><body><!-- Markup--><div class="navbar navbar-fixed-top"><div class="navbar-inner"><div class="container"><a href="/" class="brand">Welcome</a><ul class="nav"><li typeof="sioc:Page" about="/pages/hello"><a href="/pages/hello" property="dc:title">This is a Page</a></li><li typeof="sioc:Page" about="/pages/posts"><a href="/pages/posts" property="dc:title">Posts</a></li></ul></div></div></div><div class="container"><section id="content" class="content"><article id="post" class="post"><h1>Установка 1С под линукс в госте</h1><div class="post-content"><p>Описан процесс создания сервера KVM на основе Gentoo и виртуальной машины для 1С, опять же на Gentoo. [<code>недописана установка 1С</code>].
+Написана давно, в 2010 году, и с тех пор не проверялась. Также недописана установка собственно 1С.</p>
+<p>Используемая документация</p>
+<ul>
+<li><a href="http://www.gentoo.org/doc/en/gentoo-x86+raid+lvm2-quickinstall.xml">Gentoo Linux x86 with Software Raid and LVM2 Quick Install Guide</a></li>
+<li><a href="http://en.gentoo-wiki.com/wiki/RAID/Software">RAID/Software</a></li>
+<li><a href="http://en.gentoo-wiki.com/wiki/KVM">KVM</a></li>
+</ul>
+<h2>Cоздание материнской ОС</h2>
+<p>Загружаеся с gentoo-cd:</p>
+<pre><code>gentoo nox</code></pre>
+<p>Настроиваем сеть</p>
+<pre><code>livecd ~ # net-setup eth0</code></pre>
+<p>Настраиваем сеть, задаем пароль для того чтобы подключится с удаленной машины и работать в комфорте</p>
+<pre><code>ifconfig eth0
+passwd
+/etc/init.d/sshd start</code></pre>
+<p>Подключаемся к машине (в моем случае это 148)</p>
+<pre><code>ssh root@10.96.0.148</code></pre>
+<p>Подключаем модули</p>
+<pre><code>livecd ~ # modprobe raid0 
+livecd ~ # modprobe raid1
+livecd ~ # modprobe dm-mod</code></pre>
+<p>В моем случае я взял для примера пару старых винтов на 40Gb.
+При разметке не забываем сменить тип блока <code>(82 - swap, fd - Linux raid autodetect)</code></p>
+<pre><code>livecd ~ # fdisk -l /dev/sda
+
+Disk /dev/sda: 40.0 GB, 40019582464 bytes
+255 heads, 63 sectors/track, 4865 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0xbcc1b5b0
+
+Device Boot      Start         End      Blocks   Id  System
+/dev/sda1               1         132     1060258+  82  Linux swap / Solaris
+/dev/sda2   *         133         655     4200997+  fd  Linux raid autodetect
+/dev/sda3             656        4865    33816825   fd  Linux raid autodetect</code></pre>
+<p>Копируем разметку с первого на второй</p>
+<pre><code># sfdisk -d /dev/sda | sfdisk /dev/sdb</code></pre>
+<p>Подключаем модули и создем RAID</p>
+<pre><code># cd /dev &amp;&amp; MAKEDEV md</code></pre>
+<p>Корень(md0) делаем mirror</p>
+<pre><code>livecd dev # mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 \
+/dev/sda2 /dev/sdb2</code></pre>
+<p>Остальной(md1) - как угодно ( в моем случае тоже mirror, но можно и --level=0 (стрип) )</p>
+<pre><code>livecd dev # mdadm --create --verbose /dev/md2 --level=1 --raid-devices=2 \
+/dev/sda3 /dev/sdb3</code></pre>
+<p>Проверяем готовность(может быть долго, в зависимости от размера )</p>
+<pre><code>livecd / # cat /proc/mdstat 
+Personalities : [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md1 : active raid1 sdb2[1] sda2[0]
+      4200896 blocks [2/2] [UU]
+
+md2 : active raid0 sdb3[1] sda3[0]
+      67633408 blocks 64k chunks
+
+unused devices: &lt;none&gt;</code></pre>
+<p>Если долго, то можно медитировать на (обновляется раз в 2 сек)</p>
+<pre><code>livecd dev # watch cat /proc/mdstat</code></pre>
+<p>Форматируем корень, создаем и подключаем свап</p>
+<pre><code>livecd dev # mkfs.ext4 -j /dev/md1
+livecd dev # mkswap /dev/sda1 &amp;&amp; mkswap /dev/sdb1 
+livecd dev # swapon -p 1 /dev/sda1 &amp;&amp; swapon -p 1 /dev/sdb1</code></pre>
+<p>Создаем LVM2 ( 4Gb - на /usr/portage и 10Gb на /vm )</p>
+<pre><code>livecd dev # pvcreate /dev/md2
+livecd dev # vgcreate vg /dev/md2 
+livecd dev # lvcreate -L4G -nportage vg
+livecd dev # lvcreate -L10G -nvm vg
+livecd dev # mdadm -Es &gt; /etc/mdadm.conf</code></pre>
+<p>Проверяем</p>
+<pre><code>livecd dev # vgs
+  VG   #PV #LV #SN Attr   VSize  VFree 
+  vg     1   1   0 wz--n- 64.50G 60.50G
+livecd dev # lvs
+  LV      VG   Attr   LSize Origin Snap%  Move Log Copy%  Convert
+  portage vg   -wi-a- 4.00G
+  vm      vg   -wi-a- 10.00G</code></pre>
+<p>Форматируем</p>
+<pre><code>livecd dev # mkfs.ext4 -j /dev/vg/portage
+livecd dev # mkfs.ext4 -j /dev/vg/vm</code></pre>
+<p>Подключаем все подряд в /mnt/gentoo</p>
+<pre><code>livecd dev # mount /dev/md1 /mnt/gentoo/
+livecd dev # cd /mnt/gentoo/
+livecd gentoo # mkdir dev proc vm usr usr/portage
+livecd gentoo # mount -t proc proc proc 
+livecd gentoo # mount -o bind /dev dev
+livecd gentoo # mount /dev/vg/portage usr/portage/</code></pre>
+<p>Сливаем и устанавиваем <a href="http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3/hardened/">stage3</a></p>
+<pre><code>livecd gentoo # wget [зеркало]
+livecd gentoo # tar xjpf stage3*</code></pre>
+<p>Сливаем и устанавливаем <a href="http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2">portage</a></p>
+<pre><code>livecd gentoo # wget [зеркало]
+livecd gentoo # cd usr/
+livecd usr # tar xjf ../portage*</code></pre>
+<p>Входим в систему, устанавливаем пароль на систему и  часовой пояс</p>
+<pre><code>livecd usr # cp -L /etc/resolv.conf /mnt/gentoo/etc/
+livecd usr # chroot /mnt/gentoo /bin/bash
+livecd / # env-update &amp;&amp; source /etc/profile
+livecd / # passwd
+livecd / # cp /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime</code></pre>
+<p>Собираем ядро</p>
+<pre><code>livecd / # emerge gentoo-sources
+livecd / # cd /usr/src/linux
+livecd linux # make menuconfig</code></pre>
+<p>Отмечаем обязательные опции</p>
+<pre><code>Device Drivers ---&gt;
+[*] Multiple devices driver support (RAID and LVM)  ---&gt;
+  &lt;*&gt;   RAID support
+  [*]     Autodetect RAID arrays during kernel boot
+  &lt; &gt;     Linear (append) mode
+  &lt;*&gt;     RAID-0 (striping) mode
+  &lt;*&gt;     RAID-1 (mirroring) mode
+
+File Systems ---&gt;
+&lt; &gt; Second extended fs support
+  &lt; &gt; Ext3 journalling file system support
+  &lt;*&gt; The Extended 4 (ext4) filesystem
+  [*]   Use ext4 for ext2/ext3 file systems (NEW)
+
+[*] Virtualization ---&gt;
+    --- Virtualization
+    &lt;*&gt; Kernel-based Virtual Machine (KVM) support
+    &lt;*&gt;   KVM for Intel processors support 
+   &lt; &gt;   KVM for AMD processors support
+
+Device Drivers ---&gt;
+    [*] Network device support ---&gt;
+            &lt;*&gt; Universal TUN/TAP device driver support
+
+Networking support ---&gt;
+    Networking options ---&gt;
+        &lt;*&gt; 802.1d Ethernet Bridging
+        &lt;*&gt; 802.1Q VLAN Support</code></pre>
+<p>Компилируем и устанавливаем ядро</p>
+<pre><code>livecd linux # make &amp;&amp; make modules_install
+livecd linux # cp arch/x86_64/boot/bzImage /boot 
+livecd linux # cp arch/x86_64/boot/bzImage /boot/bzImage-stable</code></pre>
+<p>Я не могу без vim&#39;а ))</p>
+<pre><code>    livecd etc # USE=&quot;-gpm&quot; emerge vim &amp;&amp; export EDITOR=vim</code></pre>
+<p>Реактируем таблицу разделов</p>
+<pre><code>livecd etc # vi /etc/fstab
+/dev/md1                /               ext4            noatime         0 1
+/dev/sda1               none            swap            sw,pri=1        0 0     
+/dev/sdb1               none            swap            sw,pri=1        0 0     
+/dev/vg/portage         /usr/portage    ext4            noatime         1 2
+/dev/vg/vm              /vm             ext4            noatime         1 2</code></pre>
+<p>Применяем профиль</p>
+<pre><code>livecd etc # eselect profile list
+Available profile symlink targets:
+  [1]   default/linux/amd64/10.0 *
+  [2]   default/linux/amd64/10.0/desktop
+  [3]   default/linux/amd64/10.0/desktop/gnome
+  [4]   default/linux/amd64/10.0/desktop/kde
+  [5]   default/linux/amd64/10.0/developer
+  [6]   default/linux/amd64/10.0/no-multilib
+  [7]   default/linux/amd64/10.0/server
+  [8]   hardened/linux/amd64/10.0
+  [9]   hardened/linux/amd64/10.0/no-multilib
+  [10]  selinux/2007.0/amd64
+  [11]  selinux/2007.0/amd64/hardened
+  [12]  selinux/v2refpolicy/amd64
+  [13]  selinux/v2refpolicy/amd64/desktop
+  [14]  selinux/v2refpolicy/amd64/developer
+  [15]  selinux/v2refpolicy/amd64/hardened
+  [16]  selinux/v2refpolicy/amd64/server
+livecd init.d # eselect profile set 8</code></pre>
+<p>Проверяем make.conf, добавляем нужные флаги</p>
+<pre><code># vi /etc/make.conf
+CFLAGS=&quot;-O2 -pipe&quot;
+CXXFLAGS=&quot;${CFLAGS}&quot;
+CHOST=&quot;x86_64-pc-linux-gnu&quot;
+QEMU_USER_TARGETS=&quot;i386 x86_64&quot;
+QEMU_SOFTMMU_TARGETS=&quot;i386 x86_64&quot;
+USE=&quot;-gpm unicode mmx sse sse2&quot;</code></pre>
+<p>Устанавливаем локаль</p>
+<pre><code># echo &#39;en_US.UTF-8 UTF-8&#39; &gt; /etc/locale.gen
+# echo &#39;ru_RU.UTF-8 UTF-8&#39; &gt;&gt; /etc/locale.gen
+# locale-gen
+# echo &#39;LANG=en_US.UTF8&#39; &gt; /etc/env.d/02locale
+# source /etc/profile
+# mkdir /etc/portage
+# echo &#39;=app-emulation/qemu-kvm-0.12.5-r1&#39; &gt; /etc/portage/package.keywords</code></pre>
+<p>Устанавливаем скопом все нужные пакеты</p>
+<pre><code># emerge mdadm lvm2 syslog-ng vixie-cron grub bridge-utils \
+usermode-utilities usbutils qemu-kvm iptables</code></pre>
+<p>Настройки сети - серверу отдаем 10.96.0.3, гости возьмут себе сами (при условии что в сети есть DHCP сервер)</p>
+<pre><code>livecd etc # groupadd kvm
+livecd etc # cd conf.d
+livecd conf.d # vi net
+
+bridge_br0=&quot;eth0 tap0&quot;
+config_eth0=( &quot;null&quot; )
+config_tap0=( &quot;null&quot; )
+
+config_br0=( &quot;10.96.0.3/24&quot; )
+routes_br0=( &quot;default via 10.96.0.254&quot; )
+brctl_br0=( &quot;stp off&quot; )
+
+tuntap_tap0=&quot;tap&quot;
+tunctl_tap0=&quot;-g kvm&quot;
+
+depend_br0(){
+    need net.tap0
+}</code></pre>
+<p>Устанавливаем загрузку сети при включении</p>
+<pre><code>livecd conf.d # cd /etc/init.d/
+livecd init.d # ln -s net.lo net.br0
+livecd init.d # ln -s net.lo net.tap0
+livecd init.d # rc-update add net.br0 default</code></pre>
+<p>Устанавливаем загрузку лога, крона и ssh</p>
+<pre><code>livecd init.d # rc-update add syslog-ng default
+livecd init.d # rc-update add vixie-cron default
+livecd init.d # rc-update add sshd default</code></pre>
+<p>Настраиваем загрузчик на оба винчестера</p>
+<pre><code>livecd init.d # vi /boot/grub/grub.conf
+default 0
+timeout 8
+splashimage=(hd0,1)/boot/grub/splash.xpm.gz
+
+title Gentoo 
+root (hd0,1)
+kernel /boot/bzImage root=/dev/md1 rootfstype=ext4
+
+title Gentoo stable kernel
+root (hd0,1)
+kernel /boot/bzImage-stable root=/dev/md1 rootfstype=ext4
+
+livecd conf.d # grub
+grub&gt; root (hd0,1)
+grub&gt; setup (hd0)
+grub&gt; root (hd1,1)
+grub&gt; setup (hd1)
+grub&gt; quit</code></pre>
+<p>Перезагружаемся</p>
+<pre><code>livecd conf.d # exit
+livecd usr # cd /
+livecd / # umount /mnt/gentoo/proc /mnt/gentoo/dev /mnt/gentoo/usr/portage /mnt/gentoo
+livecd / # reboot</code></pre>
+<p>После ребута обновляем все пакеты (долго)</p>
+<pre><code>livecd / # emerge -uND world</code></pre>
+<p>Наслаждаемся.</p>
+<h2>Если все плохо</h2>
+<p>Если не смогли загрузиться, то грузимся еще раз с cd</p>
+<p>В случае каких-либо проблем, для того чтобы поднять файловую систему с CD</p>
+<pre><code>cd /dev
+MAKEDEV md
+mdadm --assemble /dev/md1 /dev/sda2 /dev/sdb2
+mdadm --assemble /dev/md2 /dev/sda3 /dev/sdb3
+vgchange -a y</code></pre>
+<h2>Проверка raid</h2>
+<p>Допустим, один из винчестеров умер.</p>
+<p>Выключаем машину, ставим другой винчестер вместо, к примеру, первого. И берем другой размер(в моем случае: старый - 40, новый - 80)</p>
+<p>Копируем таблицу раделов с первого на второй</p>
+<pre><code># sfdisk -d /dev/sda | sfdisk /dev/sdb
+# mkswap /dev/sdb1
+# mdadm --manage /dev/md1 --add /dev/sdb2
+# mdadm --manage /dev/md2 --add /dev/sdb3</code></pre>
+<p>Наблюдаем за восстановлением</p>
+<pre><code># watch cat /proc/mdstat
+# grub
+root (hd1,1)
+setup (hd1)</code></pre>
+<h2>Установка гостя (Linux-1C)</h2>
+<p>1 вариант - в виде файла</p>
+<pre><code># cd /vm
+# qemu-img create -f qcow2 1c.img 8G</code></pre>
+<p>2 вариант - выделяем место на LVM</p>
+<pre><code># lvcreate -L8G -n1c vg</code></pre>
+<p>Копируем загрузочный DVD в систему для загрузки с него гостя</p>
+<pre><code># scp arrrght@10.96.0.141:/Users/arrrght/Distrib/livedvd-amd64-multilib-10.1.iso ./
+
+# vi /start-1c.sh
+#!/bin/sh
+/usr/bin/kvm \
+    -drive file=/dev/vg/1c,if=virtio,boot=on \
+    -m 2096 \
+    -smp 2 \
+    -cdrom /vm/livedvd-amd64-multilib-10.1.iso \
+    -net nic,model=virtio \
+    -net tap,ifname=tap0,script=no,downscript=no \
+    -vnc :1 \
+    -boot d</code></pre>
+<p>Подключаемся через vnc-клиент к 10.96.0.3:5901 и проводим почти те же действия:</p>
+<pre><code># passwd
+# net-setup eth0
+# /etc/init.d/sshd start</code></pre>
+<p>Подключаемся, затем разбиваем диск на swap(1G) и остальное, и далее по накатанной.</p>
+<p>Проше будет с сетью:</p>
+<pre><code># echo &#39;config_eth0=( &quot;10.96.0.98/24&quot; )&#39; &gt; /etc/conf.d/net
+# echo &#39;routes_eth0=( &quot;default via 10.96.0.254&quot; )&#39; &gt;&gt; /etc/conf.d/net
+# rc-update add net.eth0 default</code></pre>
+<p>Одно дополнение при установке Grub:</p>
+<pre><code># echo &#39;(hd0) /dev/vda&#39; &gt; /boot/grub/device.map
+# grub --device-map=/boot/grub/device.map
+&gt; root (hd0,1)
+&gt; setup (hd0)
+&gt; quit</code></pre>
+<p>TODO: Дальше (собственно установка 1С)</p>
+<p><strong><em>PS: 2013 год. Все делается намного проще. Будет время - напишу</em></strong></p>
+</div></article><footer><section id="related"><h3>Related Posts</h3><nav class="linklist"><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/ext4-nodejs-login">Ext4. NodeJS. Login.</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/hello">This is a Blog Post</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/mailserver">Linux, RAID, LVM, почта и LDAP (5-в-одном)</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/netzke-cucumber-selenium">Автотесты Netzke в браузере</a></li></nav></section></footer></section><hr><footer><div>© Your Company 2012</div><div style="font-style:italic; font-size: 12px">This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))</div></footer></div><!-- Scripts--><script defer="defer"  src="/vendor/prettify.js"></script><script defer="defer"  src="/vendor/jquery.js"></script><script defer="defer"  src="/vendor/twitter-bootstrap/js/bootstrap.js"></script><script defer="defer"  src="/vendor/log.js"></script><script defer="defer"  src="/vendor/modernizr.js"></script><script defer="defer"  src="/scripts/script.js"></script></body></html>

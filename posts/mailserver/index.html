@@ -1,0 +1,199 @@
+<!DOCTYPE html><html lang="en"><head><!-- Meta--><meta charset="utf-8"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Linux, RAID, LVM, почта и LDAP (5-в-одном) | Your Website</title><meta name="description" content="When your website appears in search results in say Google, the text here will be shown underneath your website's title."><meta name="keywords" content="place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website"><meta name="author" content="Your Name"><meta http-equiv="X-Powered-By" content="DocPad"/><meta name="viewport" content="width=device-width"><!-- Icons--><link rel="shortcut icon" href="ico/favicon.ico"><link rel="apple-touch-icon-precomposed" sizes="144x144" href="ico/apple-touch-icon-144-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="114x114" href="ico/apple-touch-icon-114-precomposed.png"><link rel="apple-touch-icon-precomposed" sizes="72x72" href="ico/apple-touch-icon-72-precomposed.png"><link rel="apple-touch-icon-precomposed" href="ico/apple-touch-icon-57-precomposed.png"><!--[if lt IE 9]><script async src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]--><!-- Styles--><link  rel="stylesheet" href="/vendor/prettify.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap.css" /><link  rel="stylesheet" href="/vendor/twitter-bootstrap/css/bootstrap-responsive.css" /><link  rel="stylesheet" href="/styles/style.css" /></head><body><!-- Markup--><div class="navbar navbar-fixed-top"><div class="navbar-inner"><div class="container"><a href="/" class="brand">Welcome</a><ul class="nav"><li typeof="sioc:Page" about="/pages/hello"><a href="/pages/hello" property="dc:title">This is a Page</a></li><li typeof="sioc:Page" about="/pages/posts"><a href="/pages/posts" property="dc:title">Posts</a></li></ul></div></div></div><div class="container"><section id="content" class="content"><article id="post" class="post"><h1>Linux, RAID, LVM, почта и LDAP (5-в-одном)</h1><div class="post-content"><h2>Вступление</h2>
+<ul>
+<li>Имеем:<ul>
+<li>полудохлое железо на CeleronD</li>
+<li>4 полудохлых винта на 80Гб</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Что надо:<ul>
+<li>почтовый сервер</li>
+<li>pop3 и imap</li>
+<li>управляемый, не входя (лишний раз) в консоль, почтой с Win*</li>
+<li>общая адресная книга на предприятии</li>
+<li>в случае выхода из строя одного из винчестеров система не должна падать</li>
+<li>и все это надо быстро</li>
+<li>и чтоб не тормозило</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>Делаем:<ul>
+<li>программный райд на 4 винчестера</li>
+<li>LVM (почта + барахло)</li>
+<li>posfix/dovecot</li>
+<li>вся аутентификация через ldap</li>
+<li>на Win* ставим <a href="http://www.ldapadmin.org">LdapAdmin</a> (или любой <a href="http://jxplorer.org">другой</a> клиент)</li>
+</ul>
+</li>
+</ul>
+<h2>Подготовка</h2>
+<p>Грузимся с CSS - <a href="http://www.calculate-linux.ru/main/ru/download">Calculate Linux Scratch</a> - тот же 100% Gentoo, вид сбоку. Устанавливается быстрее, большая часть пакетов - бинарные</p>
+<p>Имея 4 винчестера на 80Гб, бьем их на 4 части:</p>
+<pre><code>4Мб -  [EF02] Bios boot partition
+20Гб - [FD00] root RAID1 (4)
+2Гб -  [FD00] swap RAID1 (4)
+52Гб - [FD00] LVM RAID10 (2+2)</code></pre>
+<p>Делаем все по-модному, с GPT - разбиваем утилитой gdisk.
+Первый раздел делаем, чтобы grub не ругался на отсутствие &quot;bios partition&quot;. В теории более чем достаточно 1Мб, но я решил не жадничать
+(<a href="http://www.rodsbooks.com/gdisk/booting.html">GdiskBooting</a> | <a href="http://en.wikipedia.org/wiki/BIOS_Boot_partition">BiosBootPartition</a>)</p>
+<p>Чистим первые несколько секторов: <code>dd if=/dev/zero of=/dev/sda bs=1M count=1</code></p>
+<p>Разбиваем один винчестер через gdisk, дальше копируем разбивку на остальные:</p>
+<pre><code>sgdisk -R=/dev/sdb /dev/sda
+sgdisk -R=/dev/sdc /dev/sda
+sgdisk -R=/dev/sdd /dev/sda</code></pre>
+<p>Диск разбили, делаем 2 софтовых райда (<code>md0 - root, md1 - swap</code>):</p>
+<pre><code>mdadm --create --verbose /dev/md0 --level=1 --raid-devices=4 /dev/sda2 /dev/sdb2 /dev/sdc2 /dev/sdd2
+mdadm --create --verbose /dev/md1 --level=1 --raid-devices=4 /dev/sda3 /dev/sdb3 /dev/sdc3 /dev/sdd3</code></pre>
+<p>Наблюдаем за созданием (минут 10):<code>watch cat /proc/mdstat</code></p>
+<p><code>/dev/md2 (LVM)</code> сделаем потом, чтобы сейчас не ждать синхронизации - скажем, после установки и обновления системы</p>
+<h2>Система</h2>
+<p>Устанавливаем Calculate Linux Scratch:</p>
+<p><code>cl-install -d /dev/md0 -d /dev/md1:swap</code></p>
+<p>Вводим парроль рута и ждем около 5 минут чтобы система установилась.
+После перезагрузки ставим grub2 на все винты (или проверям чтобы он установился):</p>
+<pre><code>grub-install /dev/sda
+grub-install /dev/sdb
+grub-install /dev/sdc
+grub-install /dev/sdd</code></pre>
+<p>Обновляем систему:</p>
+<pre><code>eix-sync
+emerge -uND @world
+dispach-conf</code></pre>
+<p>Ставим необходимые пакеты:</p>
+<pre><code>emerge vixie-cron logrotate syslog-ng
+dispach-conf
+rc-update add lvm boot</code></pre>
+<p>Явно вышло новое ядро - <strong>перезагружаемся</strong>, смотрим, что все хорошо и ставим 10 раид на остаток(потом попилим lvm).
+Это надолго, около часа, не меньше.</p>
+<pre><code>mdadm --create --verbose /dev/md1 --level=10 --raid-devices=4 /dev/sda3 /dev/sdb3 /dev/sdc3 /dev/sdd3
+watch cat /proc/mdstat</code></pre>
+<p>Итак, наша система готова. И вот здесь надо уже приступать к тестам. Лучше сделать это сейчас, чтобы понять/вспомнить что делать в случае аварии. <strong>Очень</strong> рекомендую потратить на это время.</p>
+<p>Выключам комп, отключаем один из винтов, включаемся-загружаемся, наблюдаем что система работает, <code>cat /proc/mdstat</code> говорит что у него 3 винта, ему плохо, но он работает.</p>
+<p>Выключаем машину, подключаем обратно винт, загружаемся, смотрим что происходит, принимает меры, гуглим.</p>
+<p><strong>PS</strong>: Можно сказать что я часто перезагружаюсь. Но очень часто лучше заметить ошибку сразу, после перезагрузки (не включили службу, не добили диск, забыли установить grub или не обратили внимания на его ошибки, итд). А в итоге, когда сервер работает уже полгода, и все давно забыли что это за железка и что она вообще делает, - пропадает питание, и сервер останавливается на буте, ожидая что кто-нибудь загрузит наконец-то ядро... Сервер - автономная железка, которая должна уметь включаться/выключаться без вмешательства админа.</p>
+<h2>Почта</h2>
+<p>Ставим зависимости в <code>/etc/portage/package.use/custom</code></p>
+<pre><code>mail-mta/postfix dovecot-sasl ldap
+net-mail/dovecot ldap
+net-nds/openldap ssl</code></pre>
+<p>Устанавливаем</p>
+<pre><code>emerge postfix dovecot openldap
+dispatch-conf</code></pre>
+<h3>LDAP</h3>
+<p>Настраиваем LDAP <code>/etc/openldap/slapd.conf</code></p>
+<pre><code>## Включаем схемы:
+include         /etc/openldap/schema/core.schema
+include         /etc/openldap/schema/cosine.schema
+
+include         /etc/openldap/schema/inetorgperson.schema
+include         /etc/openldap/schema/java.schema
+
+include         /etc/openldap/schema/openldap.schema
+include         /etc/openldap/schema/nis.schema
+include         /etc/openldap/schema/corba.schema
+include         /etc/openldap/schema/dyngroup.schema
+include         /etc/openldap/schema/misc.schema
+include         /etc/openldap/schema/pmi.schema
+
+## Включаем аутентификацию
+moduleload      back_passwd.so
+moduleload      back_ldap.so
+
+## Пишем корень и супергероя
+database        hdb
+suffix          &quot;dc=company, dc=local&quot;
+rootdn          &quot;cn=Manager, dc=company, dc=local&quot;
+rootpw          super-hero-passwd
+
+## Расписываем индексы (чтобы быстрее искало и в логах не ругалось)
+index   objectClass     eq
+index   uid             eq
+index   cn              eq,sub
+index   mail            eq,sub
+index   sn              eq,sub
+index   givenName       eq,sub
+index   displayName     eq,sub</code></pre>
+<p>Прописываем в автозагрузку и запускаем</p>
+<pre><code>/etc/init.d/slapd restart
+rc-update add slapd default</code></pre>
+<p>Сразу проверяем, можем ли мы цепанутся к LDAP с винды: прописываем ip хоста, base <code>dc=company,dc=local</code>,
+юзера <code>cn=Manager, dc=company, dc=local</code> и пароль <code>super-hero-passwd</code>.</p>
+<p>Создаем раздел Users <code>objectClass=organizationUnit, ou=Users</code>
+и там -  пару учеток - test1 и test2 <code>objectClass=posixAccount,intOrgPerson,top uid=test1@company.local</code>
+ставим им пароль (правый клик, setPassword[CRYPT] в ldapAdmin)</p>
+<p>Сразу делаем пользвателя который будет отвечать за нашу почту:</p>
+<pre><code>useradd vmail</code></pre>
+<h3>Dovecot</h3>
+<p>Для начала создаем самоподписанный сертификат - переписваем из <code>/usr/share/doc/dovecot-2.1.15/</code> себе в <code>/root</code> пару файлов - <code>mkcert.sh</code> и <code>dovecot-openssl.cnf</code></p>
+<p>Правим <code>dovecot-openssl.cnf</code> запускаем <code>sh ./mkcert.sh</code> - устаналиваем самоподписанные сертификаты</p>
+<p>Правим <code>/etc/dovecot/conf.d/10-auth.conf</code>, раскоментируем <code>!include auth-ldap.conf.ext</code>, остальные инклуды ремарим</p>
+<p>Правим <code>/etc/dovecot/conf.d/auth-ldap.conf.ext</code>:</p>
+<pre><code>passdb {
+  driver = ldap
+  args = /etc/dovecot/dovecot-ldap.conf.ext
+}
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=/var/vmail/%d/%n
+}</code></pre>
+<p>Правим последний файл - <code>/etc/dovecot/dovecot-ldap.conf.ext</code>:</p>
+<pre><code>base = ou=Users,dc=company,dc=local
+user_attrs = %n,%Dd=user,home=/var/vmail/%d/%n/.maildir
+user_filter = (&amp;(objectClass=posixAccount)(uid=%u))
+pass_attrs = mail=user,userPassword=password,userdb_home=/var/vmail/%d/%n/.maildir
+pass_filter = (&amp;(objectClass=posixAccount)(uid=%u))</code></pre>
+<p>Все файлы просты и понятны. Конфиг сразу настраивается как мультидоменный, на всякий случай, т.е. юзер будет аутентифицироваться как test1@company.local, почта будет хранится в <code>/var/vmail/company.local/test1</code></p>
+<p>С Dovecot закончили. Отрезаем кусок, скажем в 30Гб, у LVM, и монтируем его в /var/vmail</p>
+<pre><code>vgcreate vg /dev/md2
+lvcreate -nvmail -L30G vg
+mkfs.ext4 /dev/vg/vmail
+mkdir /dev/vmail
+mount /dev/vg/vmail /var/vmail</code></pre>
+<p>Не забываем прописать в <code>/etc/fstab</code>:
+<code>/dev/vg/vmail /var/vmail ext4 noatime 0 1</code></p>
+<p>Запускаем, прописываем в автозагрузку и проверяем</p>
+<pre><code>rc-update add dovecot default
+/etc/init.d/dovecot restart</code></pre>
+<p>Заходим в почтовый клиент, проверям, что подключилось нормально - писем нет, аутентификация прошла, в логах <code>/var/log/messages</code> ошибок нет.</p>
+<h3>Postfix</h3>
+<p><code>/etc/postfix/master.cf</code>: добавляем одну строку</p>
+<pre><code>dovecot   unix  -       n       n       -       -       pipe
+        flags=DRhu user=vmail:vmail argv=/usr/libexec/dovecot/deliver -f ${sender} -d ${recipient}</code></pre>
+<p>и в файл <code>/etc/postfix/main.cf</code>:</p>
+<pre><code>message_size_limit=99999999
+mailbox_size_limit=99999999
+smtpd_use_tls=yes
+smtpd_tls_cert_file=/etc/ssl/certs/dovecot.pem
+smtpd_tls_key_file=/etc/ssl/private/dovecot.pem
+
+virtual_mailbox_maps     = ldap:/etc/postfix/ldap_virtual_mailbox_maps.cf
+virtual_alias_maps       = hash:/etc/mail/aliases
+dovecot_destination_recipient_limit = 1
+
+local_transport = dovecot
+virtual_gid_maps = static:1000
+virtual_uid_maps = static:1000
+virtual_mailbox_base = /var/vmail
+virtual_mailbox_limit = 1000000000
+virtual_transport = dovecot
+
+myhostname = mailbox.company.local
+myorigin = $mydomain
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+home_mailbox = .maildir/</code></pre>
+<p>На будущее: сделать алиазы тоже через LDAP, сейчас надо править <code>/etc/mail/aliases</code> и делать <code>newaliases</code>.
+Это происходит достаточно редко, поэтому я особо не заморачивался.</p>
+<p>Опять же, запускаем, прописываем в автозагрузку:</p>
+<pre><code>rc-update add postfix default
+/etc/init.d/postfix restart</code></pre>
+<p>Ставим пакет для простоты проверки: <code>emerge mailx</code>, и проверям работу:</p>
+<pre><code>date | mail test1</code></pre>
+<p>В это время смотрим в логи <code>tail -f /var/log/messages</code>, проверям что создался <code>/var/vmail/company.local/test1/.maildir</code>, разбух на пару кило. Идем в почтовый клиент и проверяем почту от test1@company.local на test2@company.local.</p>
+<p>Все хорошо.</p>
+<p>Проверям как сервер справится с нагрузкой - гуглим <a href="http://download.cnet.com/MultiMail/3000-2382_4-75325323.htm">multimail</a>. Ставим для начала пару потоков простым письмом, если все хорошо - ставим 10 потоков по 999 писем с большими вложениями - смотрим в это время на очередь к почте <code>postqueue -p | tail -1</code>, загрузку системы <code>atop,iotop,htop</code>, и одновременно смотрим на любимый почтовый клиент.</p>
+<p>Все живы, все работает. Удаляем все каталоги в <code>/var/vmail/company.local/*</code> (чтобы не перегружать почтовый клиент спамом)</p>
+<p><strong>Перезагружаемся</strong>, не заходя в консоль убеждаемся что почта ходит, создаем третьего пользователя test3 через ldap, проверям что все у него хорошо. Выставляем сервер в инет, отправляем самому себе почту с личного почтового ящика и обратно, проверям на открытый релей.</p>
+<p>Ну и поскольку это все ldap  - настраиваем общую адресную книгу в почтовых клиентах, а это уже задание на дом ::))</p>
+</div></article><footer><section id="related"><h3>Related Posts</h3><nav class="linklist"><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/ext4-nodejs-login">Ext4. NodeJS. Login.</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/gentoo-softraid-lvm-kvm-1c">Установка 1С под линукс в госте</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/hello">This is a Blog Post</a></li><li><span>Thu Apr 18 2013</span> &raquo;&nbsp;<a href="/posts/netzke-cucumber-selenium">Автотесты Netzke в браузере</a></li></nav></section></footer></section><hr><footer><div>© Your Company 2012</div><div style="font-style:italic; font-size: 12px">This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))</div></footer></div><!-- Scripts--><script defer="defer"  src="/vendor/prettify.js"></script><script defer="defer"  src="/vendor/jquery.js"></script><script defer="defer"  src="/vendor/twitter-bootstrap/js/bootstrap.js"></script><script defer="defer"  src="/vendor/log.js"></script><script defer="defer"  src="/vendor/modernizr.js"></script><script defer="defer"  src="/scripts/script.js"></script></body></html>

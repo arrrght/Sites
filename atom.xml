@@ -1,0 +1,1061 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Your Website</title>
+  <link href="http://website.com/atom.xml" rel="self"/>
+  <link href="http://website.com"/>
+  <updated>2013-04-18T05:10:16.261Z</updated>
+  <id>http://website.com</id>
+  <author>
+    <name>Your Name</name>
+    <email>your@email.com</email>
+  </author>
+
+  
+    <entry>
+      <title>Ext4. NodeJS. Login.</title>
+      <link href="http://website.com//posts/ext4-nodejs-login"/>
+      <updated>2013-04-18T05:07:21.000Z</updated>
+      <id>http://website.com//posts/ext4-nodejs-login</id>
+      <content type="html">&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;!-- Meta--&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge,chrome=1&quot;&gt;&lt;title&gt;Ext4. NodeJS. Login. | Your Website&lt;/title&gt;&lt;meta name=&quot;description&quot; content=&quot;When your website appears in search results in say Google, the text here will be shown underneath your website's title.&quot;&gt;&lt;meta name=&quot;keywords&quot; content=&quot;place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website&quot;&gt;&lt;meta name=&quot;author&quot; content=&quot;Your Name&quot;&gt;&lt;meta http-equiv=&quot;X-Powered-By&quot; content=&quot;DocPad&quot;/&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;&lt;!-- Icons--&gt;&lt;link rel=&quot;shortcut icon&quot; href=&quot;ico/favicon.ico&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;144x144&quot; href=&quot;ico/apple-touch-icon-144-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;114x114&quot; href=&quot;ico/apple-touch-icon-114-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;72x72&quot; href=&quot;ico/apple-touch-icon-72-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; href=&quot;ico/apple-touch-icon-57-precomposed.png&quot;&gt;&lt;!--[if lt IE 9]&gt;&lt;script async src=&quot;http://html5shim.googlecode.com/svn/trunk/html5.js&quot;&gt;&lt;/script&gt;&lt;![endif]--&gt;&lt;!-- Styles--&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/prettify.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap-responsive.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/styles/style.css&quot; /&gt;&lt;/head&gt;&lt;body&gt;&lt;!-- Markup--&gt;&lt;div class=&quot;navbar navbar-fixed-top&quot;&gt;&lt;div class=&quot;navbar-inner&quot;&gt;&lt;div class=&quot;container&quot;&gt;&lt;a href=&quot;/&quot; class=&quot;brand&quot;&gt;Welcome&lt;/a&gt;&lt;ul class=&quot;nav&quot;&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/hello&quot;&gt;&lt;a href=&quot;/pages/hello&quot; property=&quot;dc:title&quot;&gt;This is a Page&lt;/a&gt;&lt;/li&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/posts&quot;&gt;&lt;a href=&quot;/pages/posts&quot; property=&quot;dc:title&quot;&gt;Posts&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;container&quot;&gt;&lt;section id=&quot;content&quot; class=&quot;content&quot;&gt;&lt;article id=&quot;post&quot; class=&quot;post&quot;&gt;&lt;h1&gt;Ext4. NodeJS. Login.&lt;/h1&gt;&lt;div class=&quot;post-content&quot;&gt;&lt;p&gt;Создаем окно входа используя Ext4, NodeJS, Express, Cucumis, MongoDB. Постараемся уменьшить количество кода.
+Так же попробуем частично объединить серверную и клиентскую части кода и протестировать их в cucumis.
+&lt;img src=&quot;/images/2011-05-23-1.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;Готовые исходники лежат на &lt;a href=&quot;https://github.com/arrrght/h2e4-show-1&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Лучше сразу смотреть там, я буду давать ссылки на эти исходники и комментировать по мере прохождения.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;По мотивам&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://node-js.ru/14-test-express-app-using-cucumis&quot;&gt;Test express app using cucumis&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://docs.sencha.com/ext-js/4-0/#/api/Ext.app.Application&quot;&gt;Ext4 MVC&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Создаем каталог и структуру&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mkdir h2e4-show-1 &amp;amp;&amp;amp; cd h2e4-show-1
+express -s -t ejs
+   create : .
+   create : ./app.js
+   create : ./pids
+   create : ./public/images
+   create : ./public/javascripts
+   create : ./public/stylesheets
+   create : ./public/stylesheets/style.css
+   create : ./logs
+   ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Создаем структуру в каталоге app -&amp;gt; controller, model, store и view. Убираем лишнее.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ mkdir lib &amp;amp;&amp;amp; rm -R ./views
+$ mkdir features
+$ mkdir features/step_definitions
+$ ln -s ~/Library/mylibs/ext-4.0.0 public/ext4
+$ mkdir app &amp;amp;&amp;amp; cd app
+$ mkdir controller model store view
+$ cd ..&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Прибираемся в &lt;a href=&quot;https://github.com/arrrght/h2e4-show-1/blob/master/app.js&quot;&gt;app.js&lt;/a&gt; и подключаем mongo в качестве базу для хранения сессий:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;var app = module.exports = express.createServer(),
+    mongoStore = require(&amp;#39;connect-mongodb&amp;#39;);
+
+app.use(express.session({ secret: &amp;#39;your secret here&amp;#39;,
+  store: mongoStore({ dbname: &amp;#39;tst01&amp;#39; }) }));&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;После конфигурации подключаем файл &lt;a href=&quot;https://github.com/arrrght/h2e4-show-1/blob/master/lib/h2e4.js&quot;&gt;h2e4.js&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Далее описываем как будет проходить процесс авторизации:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;function restrictUnauthorized(req, res, next){
+  console.log(&amp;#39;* User: &amp;#39; + req.session.user);
+  req.session.user_id ? next() : res.redirect(&amp;#39;/login&amp;#39;);
+};
+
+app.get(&amp;#39;/login&amp;#39;, function(req, res){
+  res.render(&amp;#39;Login.html&amp;#39;);
+});
+
+app.get(&amp;#39;/logout&amp;#39;, function(req, res){
+  delete req.session.user_id;
+  res.redirect(&amp;#39;/&amp;#39;);
+});
+
+app.get(&amp;#39;/&amp;#39;, restrictUnauthorized, function(req, res){
+  res.render(&amp;#39;Application.html&amp;#39;);
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;01-04 Функция restrictUnauthorized ограничивает анонимов только приложением Login&lt;/li&gt;
+&lt;li&gt;06-08 Показываем приложение Login на путь /login&lt;/li&gt;
+&lt;li&gt;10-13 При /logout просто чистим сиссию и перенаправляем на /login&lt;/li&gt;
+&lt;li&gt;15-17 Авторизованные идут в основное приложение&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Т.е. на самом деле у нас два Ext4 MVC приложения - одно для логина(Login) и одно основное(App)&lt;/p&gt;
+&lt;p&gt;Так, начнем мы с Login.&lt;/p&gt;
+&lt;p&gt;Рассмотрим файл &lt;a href=&quot;https://github.com/arrrght/h2e4-show-1/blob/master/app/Login.html&quot;&gt;app/Login.html&lt;/a&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;html&amp;gt;
+  &amp;lt;head&amp;gt;
+    &amp;lt;meta http-equiv=&amp;quot;content-type&amp;quot; content=&amp;quot;text/html; charset=utf-8&amp;quot;/&amp;gt;
+    &amp;lt;link rel=&amp;#39;stylesheet&amp;#39; href=&amp;#39;/ext4/resources/css/ext-all.css&amp;#39;/&amp;gt;
+    &amp;lt;script type=&amp;#39;text/javascript&amp;#39; src=&amp;#39;/ext4/bootstrap.js&amp;#39;&amp;gt;&amp;lt;/script&amp;gt;
+    &amp;lt;script type=&amp;#39;text/javascript&amp;#39; src=&amp;#39;/direct/api&amp;#39;&amp;gt;&amp;lt;/script&amp;gt;
+    &amp;lt;script type=&amp;quot;text/javascript&amp;quot; charset=&amp;quot;utf-8&amp;quot;&amp;gt;
+      Ext.Loader.setConfig({ enabled: true, disableCaching: false,
+        paths: { &amp;#39;App&amp;#39;: &amp;#39;/app&amp;#39;, &amp;#39;Ext&amp;#39;: &amp;#39;/ext4/src&amp;#39; } });
+      Ext.application({ name: &amp;#39;Login&amp;#39;, controllers: [ &amp;#39;Login&amp;#39; ] });
+    &amp;lt;/script&amp;gt;
+  &amp;lt;/head&amp;gt;
+  &amp;lt;body&amp;gt;&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;05 Здесь подключаем наш Ext4 Direct API&lt;/li&gt;
+&lt;li&gt;08-10 Описываем где лежит наше приложение, а где струкура&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Далее, пишем &lt;a href=&quot;https://github.com/arrrght/h2e4-show-1/blob/master/app/view/Viewport.js&quot;&gt;Viewport&lt;/a&gt;, он у нас один на двоих, на самом деле &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Ext.define(&amp;#39;Login.view.Viewport&amp;#39;, {
+    extend: &amp;#39;Ext.window.Window&amp;#39;,
+
+    initComponent: function() {
+      Ext.apply(this, {
+        autoShow: true,
+        title: &amp;#39;Login window&amp;#39;,
+        width: 350, autoHeight: true,
+        closable: false, resizable: false, bodyStyle: &amp;#39;background-color:#DFE8F6; padding: 5px;&amp;#39;,
+        items: Ext.create(&amp;#39;Ext.form.FormPanel&amp;#39;, {
+          border: false, bodyStyle: &amp;#39;background-color:#DFE8F6;&amp;#39;, 
+          api: { submit: Login.login },
+          buttons: [{ text: &amp;#39;Login&amp;#39;, action: &amp;#39;login&amp;#39; }],
+          defaultType: &amp;#39;textfield&amp;#39;,
+          defaults: { anchor: &amp;#39;100%&amp;#39;, allowBlank: false, msgTarget: &amp;#39;side&amp;#39; },
+          items: [
+            { name: &amp;#39;username&amp;#39;, fieldLabel: &amp;#39;User&amp;#39; },
+            { name: &amp;#39;password&amp;#39;, fieldLabel: &amp;#39;Password&amp;#39;, inputType: &amp;#39;password&amp;#39; }
+          ]
+        })
+      });
+      this.callParent(arguments);
+    }
+});
+
+Ext.define(&amp;#39;App.view.Viewport&amp;#39;, {
+    extend: &amp;#39;Ext.container.Viewport&amp;#39;,
+
+    initComponent: function() {
+      Ext.apply(this, {
+        layout: &amp;#39;fit&amp;#39;,
+        items: {
+          xtype: &amp;#39;panel&amp;#39;,
+          html: &amp;#39;It\&amp;#39;s a private area, &amp;lt;%%= session.user %&amp;gt;.&amp;#39;
+        }
+      });
+      this.callParent(arguments);
+    }
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;01-24 Рисуем окно входа - никаких обработок не делаем, ничего интересного, просто окно с двумя полями и кнопка&lt;/li&gt;
+&lt;li&gt;13 Здесь мы определяем кто будет обрабатывать нашу форму: конкретно - Login.login, сейчас мы опишем его в контроллере&lt;/li&gt;
+&lt;li&gt;26-39 Пустое окно с приветствием &amp;quot;Private area&amp;quot;, здесь вообще ничего нет&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Далее пишем контроллер &lt;a href=&quot;https://github.com/arrrght/h2e4-show-1/blob/master/app/controller/Login.js&quot;&gt;Login&lt;/a&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Ext.define(&amp;#39;Login.controller.Login&amp;#39;, {
+  extend: &amp;#39;Ext.app.Controller&amp;#39;,
+
+  models: [ &amp;#39;User&amp;#39; ],
+
+  init: function(){
+    this.control({
+      &amp;#39;button[action=login]&amp;#39;: {
+        click: this.onLoginClick
+      }
+    })
+  },
+
+  onLoginClick: function(btn, e){
+    var form = btn.up(&amp;#39;form&amp;#39;);
+    // Call endpoint (defined in view(Viewport/FormPanel)
+    // as DirectAPI: &amp;quot;api: { submit: Login.login }&amp;quot; )
+    form.submit({
+      success: function(){
+        window.location = &amp;#39;/&amp;#39;;
+      }
+    });
+  }
+});
+
+// Server side code
+Ext.endpoint(&amp;#39;login&amp;#39;, function(para){ //:: { &amp;quot;formHandler&amp;quot;: &amp;quot;true&amp;quot; }
+                                      // ^^^ look at this comment
+  var ret = this,
+      User = Mongoose.model(&amp;#39;User&amp;#39;);
+
+  // Call mongoose model &amp;#39;auth&amp;#39;
+  User.auth(para.username, para.password, function(user){
+    if (user){
+      // If auth success, set session var and return login
+      ret.app.req.session.user_id = user.id;
+      ret.app.req.session.user = user.login;
+      ret.success({ login: user.login, id: user.id });
+    }else{
+      // If fails - say it
+      ret.failure({ username: &amp;#39;User not found!&amp;#39; });
+    }
+  });
+
+  // Create one user with password if not exist
+  User.findOne({ login: &amp;#39;user&amp;#39;}, function(err, user){
+    if (!user){
+      // Look at password magic in model
+      new User({ login: &amp;#39;user&amp;#39;, password: &amp;#39;pass&amp;#39; }).save();
+    }
+  });
+});&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Вот. Здесь интереснее:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;01-24  Сам контроллер, клиентская часть &lt;/li&gt;
+&lt;li&gt;04 - Подключаем модель &amp;quot;User&amp;quot;:&lt;a href=&quot;https://github.com/arrrght/h2e4-show-1/blob/master/app/model/user.js&quot;&gt;https://github.com/arrrght/h2e4-show-1/blob/master/app/model/user.js&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;18-22 Отлавливаем нажатие кнопки, отправляем серверу и если все хорошо делаем редирект на корень&lt;/li&gt;
+&lt;li&gt;27-52 Серверная часть&lt;/li&gt;
+&lt;li&gt;27 Описание точки входа, в комментах пишем что это обработчик формы&lt;/li&gt;
+&lt;li&gt;33-43 Вызываем функцию auth, которая задается в модели(скоро дойдем и до нее), и если все хорошо, то возвращаем клиенту login и id, если нет - маппим на поле username ошибку. Ext4 сам разберется что с ней делать.&lt;/li&gt;
+&lt;li&gt;46-51 Создем юзера с логином user и паролем pass (так, на всякий случай, чтобы не лазить в mongo лишний раз)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;И, напоследок, модель &lt;a href=&quot;https://github.com/arrrght/h2e4-show-1/blob/master/app/model/user.js&quot;&gt;User&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;// Code for ext4
+Ext.define(&amp;#39;Login.model.User&amp;#39;, {
+  extend: &amp;#39;Ext.data.Model&amp;#39;,
+
+  fields: [
+    { name: &amp;#39;login&amp;#39;, type: &amp;#39;string&amp;#39; },
+    { name: &amp;#39;password&amp;#39;, type: &amp;#39;string&amp;#39; },
+  ]
+
+});
+
+// Code for Mongoose
+var Schema = Mongoose.Schema,
+    crypto = require(&amp;#39;crypto&amp;#39;),
+    ObjectId = Schema.ObjectId,
+    Query = Mongoose.Query,
+    userFields = Ext.getModel(&amp;#39;User&amp;#39;);
+
+/* We can define whole shema
+var User = new Schema({
+  login: String,
+  pswd: { salt: String , hash: String }
+});
+*/
+
+// .. or just change some fields
+delete userFields.password; // virtual it
+userFields.pswd = { salt: String , hash: String };
+
+var User = new Schema(userFields);
+
+// virtual field
+User.virtual(&amp;#39;password&amp;#39;)
+  .set(function(pass){
+    var salt = (function getSalt(){
+      var str = &amp;#39;&amp;#39;,
+          chars = &amp;#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz&amp;#39;.split(&amp;#39;&amp;#39;);
+
+      chars.forEach(function(){ str += chars[Math.floor(Math.random() * chars.length)] });
+      return str;
+    })();
+    this.set(&amp;#39;pswd.salt&amp;#39;, salt);
+    this.set(&amp;#39;pswd.hash&amp;#39;, getCrypted(salt, pass));
+  })
+  .get(function(){
+    return this.pswd.hash
+  });
+
+function getCrypted(salt, pass){
+  return crypto.createHmac(&amp;#39;sha1&amp;#39;, salt).update(pass).digest(&amp;#39;hex&amp;#39;)
+};
+
+User.static({
+  auth: function(login, password, callback){
+    this.findOne({ login: login }, function(err, user){
+      if (user &amp;amp;&amp;amp; user.password === getCrypted(user.pswd.salt, password)){
+        callback(user);
+      }else{
+        callback(null);
+      }
+    });
+  }
+});
+
+// Register model at last
+Mongoose.model(&amp;#39;User&amp;#39;, User);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Здесь еще интереснее, вкусности mongodb в действии:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;01-10 Клиентская часть модели&lt;/li&gt;
+&lt;li&gt;19-30 Описание серверной части модели для mongo. Можно как воспользоваться автоматическим преобразованием полей(простейщим &amp;#39;string&amp;#39;-&amp;gt;String, &amp;#39;float&amp;#39;-&amp;gt;Number), или создать с самомго начала базу для mongo. Скажем так: если модель простейшая, то серверная часть не пишется вообще. (PS: Хотя нет, все-таки придется сделать Mongoose.model(&amp;#39;User&amp;#39;, new Schema(userFields)); ) - подумаю как сделать даже без этого, не потеряв в гибкости.&lt;/li&gt;
+&lt;li&gt;32-46 Храним правильно пароль, для этого делаем виртуальное поле password, которое hash&amp;#39;им до потери пульса. Для этого раздваиваем поле с паролем, каждый раз генерим хеш заново и храним вместе с хешированным паролем. Кажется, так правильно.&lt;/li&gt;
+&lt;li&gt;52-62 Процедура для аутентификации, возвращающая null если не ничего нет и user если все совпало.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Вот, по сути и все описание. Я постарался максимально комментировать исходники. В процессе создания библиотека h2e4.js (Helpers For Ext4) будет прирастать новым функционалом. Очень хочется сделать сделать общую &lt;a href=&quot;http://mongoosejs.com/docs/validation.html&quot;&gt;валидацию&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Тестирование.&lt;/p&gt;
+&lt;p&gt;На самом деле, все надо делать еще в процессе создания программы, чем надеюсь Вы дальше и займетесь.&lt;/p&gt;
+&lt;p&gt;Запускаем &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;java -jar selenium-server-standalone-2.0b3.jar&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;... Не дописал тесты. Напишу в следующий раз.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;PS: на дворе 2013 год, тесты так и не написал.&lt;/em&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;/article&gt;&lt;footer&gt;&lt;section id=&quot;related&quot;&gt;&lt;h3&gt;Related Posts&lt;/h3&gt;&lt;nav class=&quot;linklist&quot;&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/gentoo-softraid-lvm-kvm-1c&quot;&gt;Установка 1С под линукс в госте&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/hello&quot;&gt;This is a Blog Post&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/mailserver&quot;&gt;Linux, RAID, LVM, почта и LDAP (5-в-одном)&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/netzke-cucumber-selenium&quot;&gt;Автотесты Netzke в браузере&lt;/a&gt;&lt;/li&gt;&lt;/nav&gt;&lt;/section&gt;&lt;/footer&gt;&lt;/section&gt;&lt;hr&gt;&lt;footer&gt;&lt;div&gt;© Your Company 2012&lt;/div&gt;&lt;div style=&quot;font-style:italic; font-size: 12px&quot;&gt;This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))&lt;/div&gt;&lt;/footer&gt;&lt;/div&gt;&lt;!-- Scripts--&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/prettify.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/jquery.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/twitter-bootstrap/js/bootstrap.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/log.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/modernizr.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/scripts/script.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;</content>
+    </entry>
+  
+    <entry>
+      <title>Установка 1С под линукс в госте</title>
+      <link href="http://website.com//posts/gentoo-softraid-lvm-kvm-1c"/>
+      <updated>2013-04-18T05:07:21.000Z</updated>
+      <id>http://website.com//posts/gentoo-softraid-lvm-kvm-1c</id>
+      <content type="html">&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;!-- Meta--&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge,chrome=1&quot;&gt;&lt;title&gt;Установка 1С под линукс в госте | Your Website&lt;/title&gt;&lt;meta name=&quot;description&quot; content=&quot;When your website appears in search results in say Google, the text here will be shown underneath your website's title.&quot;&gt;&lt;meta name=&quot;keywords&quot; content=&quot;place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website&quot;&gt;&lt;meta name=&quot;author&quot; content=&quot;Your Name&quot;&gt;&lt;meta http-equiv=&quot;X-Powered-By&quot; content=&quot;DocPad&quot;/&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;&lt;!-- Icons--&gt;&lt;link rel=&quot;shortcut icon&quot; href=&quot;ico/favicon.ico&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;144x144&quot; href=&quot;ico/apple-touch-icon-144-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;114x114&quot; href=&quot;ico/apple-touch-icon-114-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;72x72&quot; href=&quot;ico/apple-touch-icon-72-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; href=&quot;ico/apple-touch-icon-57-precomposed.png&quot;&gt;&lt;!--[if lt IE 9]&gt;&lt;script async src=&quot;http://html5shim.googlecode.com/svn/trunk/html5.js&quot;&gt;&lt;/script&gt;&lt;![endif]--&gt;&lt;!-- Styles--&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/prettify.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap-responsive.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/styles/style.css&quot; /&gt;&lt;/head&gt;&lt;body&gt;&lt;!-- Markup--&gt;&lt;div class=&quot;navbar navbar-fixed-top&quot;&gt;&lt;div class=&quot;navbar-inner&quot;&gt;&lt;div class=&quot;container&quot;&gt;&lt;a href=&quot;/&quot; class=&quot;brand&quot;&gt;Welcome&lt;/a&gt;&lt;ul class=&quot;nav&quot;&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/hello&quot;&gt;&lt;a href=&quot;/pages/hello&quot; property=&quot;dc:title&quot;&gt;This is a Page&lt;/a&gt;&lt;/li&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/posts&quot;&gt;&lt;a href=&quot;/pages/posts&quot; property=&quot;dc:title&quot;&gt;Posts&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;container&quot;&gt;&lt;section id=&quot;content&quot; class=&quot;content&quot;&gt;&lt;article id=&quot;post&quot; class=&quot;post&quot;&gt;&lt;h1&gt;Установка 1С под линукс в госте&lt;/h1&gt;&lt;div class=&quot;post-content&quot;&gt;&lt;p&gt;Описан процесс создания сервера KVM на основе Gentoo и виртуальной машины для 1С, опять же на Gentoo. [&lt;code&gt;недописана установка 1С&lt;/code&gt;].
+Написана давно, в 2010 году, и с тех пор не проверялась. Также недописана установка собственно 1С.&lt;/p&gt;
+&lt;p&gt;Используемая документация&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.gentoo.org/doc/en/gentoo-x86+raid+lvm2-quickinstall.xml&quot;&gt;Gentoo Linux x86 with Software Raid and LVM2 Quick Install Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://en.gentoo-wiki.com/wiki/RAID/Software&quot;&gt;RAID/Software&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://en.gentoo-wiki.com/wiki/KVM&quot;&gt;KVM&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Cоздание материнской ОС&lt;/h2&gt;
+&lt;p&gt;Загружаеся с gentoo-cd:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;gentoo nox&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Настроиваем сеть&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd ~ # net-setup eth0&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Настраиваем сеть, задаем пароль для того чтобы подключится с удаленной машины и работать в комфорте&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ifconfig eth0
+passwd
+/etc/init.d/sshd start&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Подключаемся к машине (в моем случае это 148)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ssh root@10.96.0.148&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Подключаем модули&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd ~ # modprobe raid0 
+livecd ~ # modprobe raid1
+livecd ~ # modprobe dm-mod&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;В моем случае я взял для примера пару старых винтов на 40Gb.
+При разметке не забываем сменить тип блока &lt;code&gt;(82 - swap, fd - Linux raid autodetect)&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd ~ # fdisk -l /dev/sda
+
+Disk /dev/sda: 40.0 GB, 40019582464 bytes
+255 heads, 63 sectors/track, 4865 cylinders
+Units = cylinders of 16065 * 512 = 8225280 bytes
+Disk identifier: 0xbcc1b5b0
+
+Device Boot      Start         End      Blocks   Id  System
+/dev/sda1               1         132     1060258+  82  Linux swap / Solaris
+/dev/sda2   *         133         655     4200997+  fd  Linux raid autodetect
+/dev/sda3             656        4865    33816825   fd  Linux raid autodetect&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Копируем разметку с первого на второй&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# sfdisk -d /dev/sda | sfdisk /dev/sdb&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Подключаем модули и создем RAID&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# cd /dev &amp;amp;&amp;amp; MAKEDEV md&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Корень(md0) делаем mirror&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # mdadm --create --verbose /dev/md1 --level=1 --raid-devices=2 \
+/dev/sda2 /dev/sdb2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Остальной(md1) - как угодно ( в моем случае тоже mirror, но можно и --level=0 (стрип) )&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # mdadm --create --verbose /dev/md2 --level=1 --raid-devices=2 \
+/dev/sda3 /dev/sdb3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Проверяем готовность(может быть долго, в зависимости от размера )&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd / # cat /proc/mdstat 
+Personalities : [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md1 : active raid1 sdb2[1] sda2[0]
+      4200896 blocks [2/2] [UU]
+
+md2 : active raid0 sdb3[1] sda3[0]
+      67633408 blocks 64k chunks
+
+unused devices: &amp;lt;none&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Если долго, то можно медитировать на (обновляется раз в 2 сек)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # watch cat /proc/mdstat&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Форматируем корень, создаем и подключаем свап&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # mkfs.ext4 -j /dev/md1
+livecd dev # mkswap /dev/sda1 &amp;amp;&amp;amp; mkswap /dev/sdb1 
+livecd dev # swapon -p 1 /dev/sda1 &amp;amp;&amp;amp; swapon -p 1 /dev/sdb1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Создаем LVM2 ( 4Gb - на /usr/portage и 10Gb на /vm )&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # pvcreate /dev/md2
+livecd dev # vgcreate vg /dev/md2 
+livecd dev # lvcreate -L4G -nportage vg
+livecd dev # lvcreate -L10G -nvm vg
+livecd dev # mdadm -Es &amp;gt; /etc/mdadm.conf&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Проверяем&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # vgs
+  VG   #PV #LV #SN Attr   VSize  VFree 
+  vg     1   1   0 wz--n- 64.50G 60.50G
+livecd dev # lvs
+  LV      VG   Attr   LSize Origin Snap%  Move Log Copy%  Convert
+  portage vg   -wi-a- 4.00G
+  vm      vg   -wi-a- 10.00G&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Форматируем&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # mkfs.ext4 -j /dev/vg/portage
+livecd dev # mkfs.ext4 -j /dev/vg/vm&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Подключаем все подряд в /mnt/gentoo&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd dev # mount /dev/md1 /mnt/gentoo/
+livecd dev # cd /mnt/gentoo/
+livecd gentoo # mkdir dev proc vm usr usr/portage
+livecd gentoo # mount -t proc proc proc 
+livecd gentoo # mount -o bind /dev dev
+livecd gentoo # mount /dev/vg/portage usr/portage/&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Сливаем и устанавиваем &lt;a href=&quot;http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3/hardened/&quot;&gt;stage3&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd gentoo # wget [зеркало]
+livecd gentoo # tar xjpf stage3*&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Сливаем и устанавливаем &lt;a href=&quot;http://distfiles.gentoo.org/snapshots/portage-latest.tar.bz2&quot;&gt;portage&lt;/a&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd gentoo # wget [зеркало]
+livecd gentoo # cd usr/
+livecd usr # tar xjf ../portage*&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Входим в систему, устанавливаем пароль на систему и  часовой пояс&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd usr # cp -L /etc/resolv.conf /mnt/gentoo/etc/
+livecd usr # chroot /mnt/gentoo /bin/bash
+livecd / # env-update &amp;amp;&amp;amp; source /etc/profile
+livecd / # passwd
+livecd / # cp /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Собираем ядро&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd / # emerge gentoo-sources
+livecd / # cd /usr/src/linux
+livecd linux # make menuconfig&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Отмечаем обязательные опции&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Device Drivers ---&amp;gt;
+[*] Multiple devices driver support (RAID and LVM)  ---&amp;gt;
+  &amp;lt;*&amp;gt;   RAID support
+  [*]     Autodetect RAID arrays during kernel boot
+  &amp;lt; &amp;gt;     Linear (append) mode
+  &amp;lt;*&amp;gt;     RAID-0 (striping) mode
+  &amp;lt;*&amp;gt;     RAID-1 (mirroring) mode
+
+File Systems ---&amp;gt;
+&amp;lt; &amp;gt; Second extended fs support
+  &amp;lt; &amp;gt; Ext3 journalling file system support
+  &amp;lt;*&amp;gt; The Extended 4 (ext4) filesystem
+  [*]   Use ext4 for ext2/ext3 file systems (NEW)
+
+[*] Virtualization ---&amp;gt;
+    --- Virtualization
+    &amp;lt;*&amp;gt; Kernel-based Virtual Machine (KVM) support
+    &amp;lt;*&amp;gt;   KVM for Intel processors support 
+   &amp;lt; &amp;gt;   KVM for AMD processors support
+
+Device Drivers ---&amp;gt;
+    [*] Network device support ---&amp;gt;
+            &amp;lt;*&amp;gt; Universal TUN/TAP device driver support
+
+Networking support ---&amp;gt;
+    Networking options ---&amp;gt;
+        &amp;lt;*&amp;gt; 802.1d Ethernet Bridging
+        &amp;lt;*&amp;gt; 802.1Q VLAN Support&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Компилируем и устанавливаем ядро&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd linux # make &amp;amp;&amp;amp; make modules_install
+livecd linux # cp arch/x86_64/boot/bzImage /boot 
+livecd linux # cp arch/x86_64/boot/bzImage /boot/bzImage-stable&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Я не могу без vim&amp;#39;а ))&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;    livecd etc # USE=&amp;quot;-gpm&amp;quot; emerge vim &amp;amp;&amp;amp; export EDITOR=vim&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Реактируем таблицу разделов&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd etc # vi /etc/fstab
+/dev/md1                /               ext4            noatime         0 1
+/dev/sda1               none            swap            sw,pri=1        0 0     
+/dev/sdb1               none            swap            sw,pri=1        0 0     
+/dev/vg/portage         /usr/portage    ext4            noatime         1 2
+/dev/vg/vm              /vm             ext4            noatime         1 2&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Применяем профиль&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd etc # eselect profile list
+Available profile symlink targets:
+  [1]   default/linux/amd64/10.0 *
+  [2]   default/linux/amd64/10.0/desktop
+  [3]   default/linux/amd64/10.0/desktop/gnome
+  [4]   default/linux/amd64/10.0/desktop/kde
+  [5]   default/linux/amd64/10.0/developer
+  [6]   default/linux/amd64/10.0/no-multilib
+  [7]   default/linux/amd64/10.0/server
+  [8]   hardened/linux/amd64/10.0
+  [9]   hardened/linux/amd64/10.0/no-multilib
+  [10]  selinux/2007.0/amd64
+  [11]  selinux/2007.0/amd64/hardened
+  [12]  selinux/v2refpolicy/amd64
+  [13]  selinux/v2refpolicy/amd64/desktop
+  [14]  selinux/v2refpolicy/amd64/developer
+  [15]  selinux/v2refpolicy/amd64/hardened
+  [16]  selinux/v2refpolicy/amd64/server
+livecd init.d # eselect profile set 8&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Проверяем make.conf, добавляем нужные флаги&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# vi /etc/make.conf
+CFLAGS=&amp;quot;-O2 -pipe&amp;quot;
+CXXFLAGS=&amp;quot;${CFLAGS}&amp;quot;
+CHOST=&amp;quot;x86_64-pc-linux-gnu&amp;quot;
+QEMU_USER_TARGETS=&amp;quot;i386 x86_64&amp;quot;
+QEMU_SOFTMMU_TARGETS=&amp;quot;i386 x86_64&amp;quot;
+USE=&amp;quot;-gpm unicode mmx sse sse2&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Устанавливаем локаль&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# echo &amp;#39;en_US.UTF-8 UTF-8&amp;#39; &amp;gt; /etc/locale.gen
+# echo &amp;#39;ru_RU.UTF-8 UTF-8&amp;#39; &amp;gt;&amp;gt; /etc/locale.gen
+# locale-gen
+# echo &amp;#39;LANG=en_US.UTF8&amp;#39; &amp;gt; /etc/env.d/02locale
+# source /etc/profile
+# mkdir /etc/portage
+# echo &amp;#39;=app-emulation/qemu-kvm-0.12.5-r1&amp;#39; &amp;gt; /etc/portage/package.keywords&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Устанавливаем скопом все нужные пакеты&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# emerge mdadm lvm2 syslog-ng vixie-cron grub bridge-utils \
+usermode-utilities usbutils qemu-kvm iptables&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Настройки сети - серверу отдаем 10.96.0.3, гости возьмут себе сами (при условии что в сети есть DHCP сервер)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd etc # groupadd kvm
+livecd etc # cd conf.d
+livecd conf.d # vi net
+
+bridge_br0=&amp;quot;eth0 tap0&amp;quot;
+config_eth0=( &amp;quot;null&amp;quot; )
+config_tap0=( &amp;quot;null&amp;quot; )
+
+config_br0=( &amp;quot;10.96.0.3/24&amp;quot; )
+routes_br0=( &amp;quot;default via 10.96.0.254&amp;quot; )
+brctl_br0=( &amp;quot;stp off&amp;quot; )
+
+tuntap_tap0=&amp;quot;tap&amp;quot;
+tunctl_tap0=&amp;quot;-g kvm&amp;quot;
+
+depend_br0(){
+    need net.tap0
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Устанавливаем загрузку сети при включении&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd conf.d # cd /etc/init.d/
+livecd init.d # ln -s net.lo net.br0
+livecd init.d # ln -s net.lo net.tap0
+livecd init.d # rc-update add net.br0 default&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Устанавливаем загрузку лога, крона и ssh&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd init.d # rc-update add syslog-ng default
+livecd init.d # rc-update add vixie-cron default
+livecd init.d # rc-update add sshd default&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Настраиваем загрузчик на оба винчестера&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd init.d # vi /boot/grub/grub.conf
+default 0
+timeout 8
+splashimage=(hd0,1)/boot/grub/splash.xpm.gz
+
+title Gentoo 
+root (hd0,1)
+kernel /boot/bzImage root=/dev/md1 rootfstype=ext4
+
+title Gentoo stable kernel
+root (hd0,1)
+kernel /boot/bzImage-stable root=/dev/md1 rootfstype=ext4
+
+livecd conf.d # grub
+grub&amp;gt; root (hd0,1)
+grub&amp;gt; setup (hd0)
+grub&amp;gt; root (hd1,1)
+grub&amp;gt; setup (hd1)
+grub&amp;gt; quit&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Перезагружаемся&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd conf.d # exit
+livecd usr # cd /
+livecd / # umount /mnt/gentoo/proc /mnt/gentoo/dev /mnt/gentoo/usr/portage /mnt/gentoo
+livecd / # reboot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;После ребута обновляем все пакеты (долго)&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;livecd / # emerge -uND world&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Наслаждаемся.&lt;/p&gt;
+&lt;h2&gt;Если все плохо&lt;/h2&gt;
+&lt;p&gt;Если не смогли загрузиться, то грузимся еще раз с cd&lt;/p&gt;
+&lt;p&gt;В случае каких-либо проблем, для того чтобы поднять файловую систему с CD&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cd /dev
+MAKEDEV md
+mdadm --assemble /dev/md1 /dev/sda2 /dev/sdb2
+mdadm --assemble /dev/md2 /dev/sda3 /dev/sdb3
+vgchange -a y&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Проверка raid&lt;/h2&gt;
+&lt;p&gt;Допустим, один из винчестеров умер.&lt;/p&gt;
+&lt;p&gt;Выключаем машину, ставим другой винчестер вместо, к примеру, первого. И берем другой размер(в моем случае: старый - 40, новый - 80)&lt;/p&gt;
+&lt;p&gt;Копируем таблицу раделов с первого на второй&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# sfdisk -d /dev/sda | sfdisk /dev/sdb
+# mkswap /dev/sdb1
+# mdadm --manage /dev/md1 --add /dev/sdb2
+# mdadm --manage /dev/md2 --add /dev/sdb3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Наблюдаем за восстановлением&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# watch cat /proc/mdstat
+# grub
+root (hd1,1)
+setup (hd1)&lt;/code&gt;&lt;/pre&gt;
+&lt;h2&gt;Установка гостя (Linux-1C)&lt;/h2&gt;
+&lt;p&gt;1 вариант - в виде файла&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# cd /vm
+# qemu-img create -f qcow2 1c.img 8G&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;2 вариант - выделяем место на LVM&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# lvcreate -L8G -n1c vg&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Копируем загрузочный DVD в систему для загрузки с него гостя&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# scp arrrght@10.96.0.141:/Users/arrrght/Distrib/livedvd-amd64-multilib-10.1.iso ./
+
+# vi /start-1c.sh
+#!/bin/sh
+/usr/bin/kvm \
+    -drive file=/dev/vg/1c,if=virtio,boot=on \
+    -m 2096 \
+    -smp 2 \
+    -cdrom /vm/livedvd-amd64-multilib-10.1.iso \
+    -net nic,model=virtio \
+    -net tap,ifname=tap0,script=no,downscript=no \
+    -vnc :1 \
+    -boot d&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Подключаемся через vnc-клиент к 10.96.0.3:5901 и проводим почти те же действия:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# passwd
+# net-setup eth0
+# /etc/init.d/sshd start&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Подключаемся, затем разбиваем диск на swap(1G) и остальное, и далее по накатанной.&lt;/p&gt;
+&lt;p&gt;Проше будет с сетью:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# echo &amp;#39;config_eth0=( &amp;quot;10.96.0.98/24&amp;quot; )&amp;#39; &amp;gt; /etc/conf.d/net
+# echo &amp;#39;routes_eth0=( &amp;quot;default via 10.96.0.254&amp;quot; )&amp;#39; &amp;gt;&amp;gt; /etc/conf.d/net
+# rc-update add net.eth0 default&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Одно дополнение при установке Grub:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# echo &amp;#39;(hd0) /dev/vda&amp;#39; &amp;gt; /boot/grub/device.map
+# grub --device-map=/boot/grub/device.map
+&amp;gt; root (hd0,1)
+&amp;gt; setup (hd0)
+&amp;gt; quit&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;TODO: Дальше (собственно установка 1С)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;PS: 2013 год. Все делается намного проще. Будет время - напишу&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;/article&gt;&lt;footer&gt;&lt;section id=&quot;related&quot;&gt;&lt;h3&gt;Related Posts&lt;/h3&gt;&lt;nav class=&quot;linklist&quot;&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/ext4-nodejs-login&quot;&gt;Ext4. NodeJS. Login.&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/hello&quot;&gt;This is a Blog Post&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/mailserver&quot;&gt;Linux, RAID, LVM, почта и LDAP (5-в-одном)&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/netzke-cucumber-selenium&quot;&gt;Автотесты Netzke в браузере&lt;/a&gt;&lt;/li&gt;&lt;/nav&gt;&lt;/section&gt;&lt;/footer&gt;&lt;/section&gt;&lt;hr&gt;&lt;footer&gt;&lt;div&gt;© Your Company 2012&lt;/div&gt;&lt;div style=&quot;font-style:italic; font-size: 12px&quot;&gt;This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))&lt;/div&gt;&lt;/footer&gt;&lt;/div&gt;&lt;!-- Scripts--&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/prettify.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/jquery.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/twitter-bootstrap/js/bootstrap.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/log.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/modernizr.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/scripts/script.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;</content>
+    </entry>
+  
+    <entry>
+      <title>This is a Blog Post</title>
+      <link href="http://website.com//posts/hello"/>
+      <updated>2013-04-18T05:07:21.000Z</updated>
+      <id>http://website.com//posts/hello</id>
+      <content type="html">&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;!-- Meta--&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge,chrome=1&quot;&gt;&lt;title&gt;This is a Blog Post | Your Website&lt;/title&gt;&lt;meta name=&quot;description&quot; content=&quot;When your website appears in search results in say Google, the text here will be shown underneath your website's title.&quot;&gt;&lt;meta name=&quot;keywords&quot; content=&quot;place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website&quot;&gt;&lt;meta name=&quot;author&quot; content=&quot;Your Name&quot;&gt;&lt;meta http-equiv=&quot;X-Powered-By&quot; content=&quot;DocPad&quot;/&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;&lt;!-- Icons--&gt;&lt;link rel=&quot;shortcut icon&quot; href=&quot;ico/favicon.ico&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;144x144&quot; href=&quot;ico/apple-touch-icon-144-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;114x114&quot; href=&quot;ico/apple-touch-icon-114-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;72x72&quot; href=&quot;ico/apple-touch-icon-72-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; href=&quot;ico/apple-touch-icon-57-precomposed.png&quot;&gt;&lt;!--[if lt IE 9]&gt;&lt;script async src=&quot;http://html5shim.googlecode.com/svn/trunk/html5.js&quot;&gt;&lt;/script&gt;&lt;![endif]--&gt;&lt;!-- Styles--&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/prettify.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap-responsive.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/styles/style.css&quot; /&gt;&lt;/head&gt;&lt;body&gt;&lt;!-- Markup--&gt;&lt;div class=&quot;navbar navbar-fixed-top&quot;&gt;&lt;div class=&quot;navbar-inner&quot;&gt;&lt;div class=&quot;container&quot;&gt;&lt;a href=&quot;/&quot; class=&quot;brand&quot;&gt;Welcome&lt;/a&gt;&lt;ul class=&quot;nav&quot;&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/hello&quot;&gt;&lt;a href=&quot;/pages/hello&quot; property=&quot;dc:title&quot;&gt;This is a Page&lt;/a&gt;&lt;/li&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/posts&quot;&gt;&lt;a href=&quot;/pages/posts&quot; property=&quot;dc:title&quot;&gt;Posts&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;container&quot;&gt;&lt;section id=&quot;content&quot; class=&quot;content&quot;&gt;&lt;article id=&quot;post&quot; class=&quot;post&quot;&gt;&lt;h1&gt;This is a Blog Post&lt;/h1&gt;&lt;div class=&quot;post-content&quot;&gt;&lt;p&gt;This is a &lt;strong&gt;blog post&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;&lt;/article&gt;&lt;footer&gt;&lt;section id=&quot;related&quot;&gt;&lt;h3&gt;Related Posts&lt;/h3&gt;&lt;nav class=&quot;linklist&quot;&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/pages/hello&quot;&gt;This is a Page&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/ext4-nodejs-login&quot;&gt;Ext4. NodeJS. Login.&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/gentoo-softraid-lvm-kvm-1c&quot;&gt;Установка 1С под линукс в госте&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/mailserver&quot;&gt;Linux, RAID, LVM, почта и LDAP (5-в-одном)&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/netzke-cucumber-selenium&quot;&gt;Автотесты Netzke в браузере&lt;/a&gt;&lt;/li&gt;&lt;/nav&gt;&lt;/section&gt;&lt;/footer&gt;&lt;/section&gt;&lt;hr&gt;&lt;footer&gt;&lt;div&gt;© Your Company 2012&lt;/div&gt;&lt;div style=&quot;font-style:italic; font-size: 12px&quot;&gt;This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))&lt;/div&gt;&lt;/footer&gt;&lt;/div&gt;&lt;!-- Scripts--&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/prettify.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/jquery.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/twitter-bootstrap/js/bootstrap.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/log.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/modernizr.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/scripts/script.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;</content>
+    </entry>
+  
+    <entry>
+      <title>Linux, RAID, LVM, почта и LDAP (5-в-одном)</title>
+      <link href="http://website.com//posts/mailserver"/>
+      <updated>2013-04-18T05:07:21.000Z</updated>
+      <id>http://website.com//posts/mailserver</id>
+      <content type="html">&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;!-- Meta--&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge,chrome=1&quot;&gt;&lt;title&gt;Linux, RAID, LVM, почта и LDAP (5-в-одном) | Your Website&lt;/title&gt;&lt;meta name=&quot;description&quot; content=&quot;When your website appears in search results in say Google, the text here will be shown underneath your website's title.&quot;&gt;&lt;meta name=&quot;keywords&quot; content=&quot;place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website&quot;&gt;&lt;meta name=&quot;author&quot; content=&quot;Your Name&quot;&gt;&lt;meta http-equiv=&quot;X-Powered-By&quot; content=&quot;DocPad&quot;/&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;&lt;!-- Icons--&gt;&lt;link rel=&quot;shortcut icon&quot; href=&quot;ico/favicon.ico&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;144x144&quot; href=&quot;ico/apple-touch-icon-144-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;114x114&quot; href=&quot;ico/apple-touch-icon-114-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;72x72&quot; href=&quot;ico/apple-touch-icon-72-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; href=&quot;ico/apple-touch-icon-57-precomposed.png&quot;&gt;&lt;!--[if lt IE 9]&gt;&lt;script async src=&quot;http://html5shim.googlecode.com/svn/trunk/html5.js&quot;&gt;&lt;/script&gt;&lt;![endif]--&gt;&lt;!-- Styles--&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/prettify.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap-responsive.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/styles/style.css&quot; /&gt;&lt;/head&gt;&lt;body&gt;&lt;!-- Markup--&gt;&lt;div class=&quot;navbar navbar-fixed-top&quot;&gt;&lt;div class=&quot;navbar-inner&quot;&gt;&lt;div class=&quot;container&quot;&gt;&lt;a href=&quot;/&quot; class=&quot;brand&quot;&gt;Welcome&lt;/a&gt;&lt;ul class=&quot;nav&quot;&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/hello&quot;&gt;&lt;a href=&quot;/pages/hello&quot; property=&quot;dc:title&quot;&gt;This is a Page&lt;/a&gt;&lt;/li&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/posts&quot;&gt;&lt;a href=&quot;/pages/posts&quot; property=&quot;dc:title&quot;&gt;Posts&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;container&quot;&gt;&lt;section id=&quot;content&quot; class=&quot;content&quot;&gt;&lt;article id=&quot;post&quot; class=&quot;post&quot;&gt;&lt;h1&gt;Linux, RAID, LVM, почта и LDAP (5-в-одном)&lt;/h1&gt;&lt;div class=&quot;post-content&quot;&gt;&lt;h2&gt;Вступление&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Имеем:&lt;ul&gt;
+&lt;li&gt;полудохлое железо на CeleronD&lt;/li&gt;
+&lt;li&gt;4 полудохлых винта на 80Гб&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;Что надо:&lt;ul&gt;
+&lt;li&gt;почтовый сервер&lt;/li&gt;
+&lt;li&gt;pop3 и imap&lt;/li&gt;
+&lt;li&gt;управляемый, не входя (лишний раз) в консоль, почтой с Win*&lt;/li&gt;
+&lt;li&gt;общая адресная книга на предприятии&lt;/li&gt;
+&lt;li&gt;в случае выхода из строя одного из винчестеров система не должна падать&lt;/li&gt;
+&lt;li&gt;и все это надо быстро&lt;/li&gt;
+&lt;li&gt;и чтоб не тормозило&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul&gt;
+&lt;li&gt;Делаем:&lt;ul&gt;
+&lt;li&gt;программный райд на 4 винчестера&lt;/li&gt;
+&lt;li&gt;LVM (почта + барахло)&lt;/li&gt;
+&lt;li&gt;posfix/dovecot&lt;/li&gt;
+&lt;li&gt;вся аутентификация через ldap&lt;/li&gt;
+&lt;li&gt;на Win* ставим &lt;a href=&quot;http://www.ldapadmin.org&quot;&gt;LdapAdmin&lt;/a&gt; (или любой &lt;a href=&quot;http://jxplorer.org&quot;&gt;другой&lt;/a&gt; клиент)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Подготовка&lt;/h2&gt;
+&lt;p&gt;Грузимся с CSS - &lt;a href=&quot;http://www.calculate-linux.ru/main/ru/download&quot;&gt;Calculate Linux Scratch&lt;/a&gt; - тот же 100% Gentoo, вид сбоку. Устанавливается быстрее, большая часть пакетов - бинарные&lt;/p&gt;
+&lt;p&gt;Имея 4 винчестера на 80Гб, бьем их на 4 части:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;4Мб -  [EF02] Bios boot partition
+20Гб - [FD00] root RAID1 (4)
+2Гб -  [FD00] swap RAID1 (4)
+52Гб - [FD00] LVM RAID10 (2+2)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Делаем все по-модному, с GPT - разбиваем утилитой gdisk.
+Первый раздел делаем, чтобы grub не ругался на отсутствие &amp;quot;bios partition&amp;quot;. В теории более чем достаточно 1Мб, но я решил не жадничать
+(&lt;a href=&quot;http://www.rodsbooks.com/gdisk/booting.html&quot;&gt;GdiskBooting&lt;/a&gt; | &lt;a href=&quot;http://en.wikipedia.org/wiki/BIOS_Boot_partition&quot;&gt;BiosBootPartition&lt;/a&gt;)&lt;/p&gt;
+&lt;p&gt;Чистим первые несколько секторов: &lt;code&gt;dd if=/dev/zero of=/dev/sda bs=1M count=1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Разбиваем один винчестер через gdisk, дальше копируем разбивку на остальные:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sgdisk -R=/dev/sdb /dev/sda
+sgdisk -R=/dev/sdc /dev/sda
+sgdisk -R=/dev/sdd /dev/sda&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Диск разбили, делаем 2 софтовых райда (&lt;code&gt;md0 - root, md1 - swap&lt;/code&gt;):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mdadm --create --verbose /dev/md0 --level=1 --raid-devices=4 /dev/sda2 /dev/sdb2 /dev/sdc2 /dev/sdd2
+mdadm --create --verbose /dev/md1 --level=1 --raid-devices=4 /dev/sda3 /dev/sdb3 /dev/sdc3 /dev/sdd3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Наблюдаем за созданием (минут 10):&lt;code&gt;watch cat /proc/mdstat&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/dev/md2 (LVM)&lt;/code&gt; сделаем потом, чтобы сейчас не ждать синхронизации - скажем, после установки и обновления системы&lt;/p&gt;
+&lt;h2&gt;Система&lt;/h2&gt;
+&lt;p&gt;Устанавливаем Calculate Linux Scratch:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cl-install -d /dev/md0 -d /dev/md1:swap&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Вводим парроль рута и ждем около 5 минут чтобы система установилась.
+После перезагрузки ставим grub2 на все винты (или проверям чтобы он установился):&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;grub-install /dev/sda
+grub-install /dev/sdb
+grub-install /dev/sdc
+grub-install /dev/sdd&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Обновляем систему:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;eix-sync
+emerge -uND @world
+dispach-conf&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ставим необходимые пакеты:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;emerge vixie-cron logrotate syslog-ng
+dispach-conf
+rc-update add lvm boot&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Явно вышло новое ядро - &lt;strong&gt;перезагружаемся&lt;/strong&gt;, смотрим, что все хорошо и ставим 10 раид на остаток(потом попилим lvm).
+Это надолго, около часа, не меньше.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mdadm --create --verbose /dev/md1 --level=10 --raid-devices=4 /dev/sda3 /dev/sdb3 /dev/sdc3 /dev/sdd3
+watch cat /proc/mdstat&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Итак, наша система готова. И вот здесь надо уже приступать к тестам. Лучше сделать это сейчас, чтобы понять/вспомнить что делать в случае аварии. &lt;strong&gt;Очень&lt;/strong&gt; рекомендую потратить на это время.&lt;/p&gt;
+&lt;p&gt;Выключам комп, отключаем один из винтов, включаемся-загружаемся, наблюдаем что система работает, &lt;code&gt;cat /proc/mdstat&lt;/code&gt; говорит что у него 3 винта, ему плохо, но он работает.&lt;/p&gt;
+&lt;p&gt;Выключаем машину, подключаем обратно винт, загружаемся, смотрим что происходит, принимает меры, гуглим.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;PS&lt;/strong&gt;: Можно сказать что я часто перезагружаюсь. Но очень часто лучше заметить ошибку сразу, после перезагрузки (не включили службу, не добили диск, забыли установить grub или не обратили внимания на его ошибки, итд). А в итоге, когда сервер работает уже полгода, и все давно забыли что это за железка и что она вообще делает, - пропадает питание, и сервер останавливается на буте, ожидая что кто-нибудь загрузит наконец-то ядро... Сервер - автономная железка, которая должна уметь включаться/выключаться без вмешательства админа.&lt;/p&gt;
+&lt;h2&gt;Почта&lt;/h2&gt;
+&lt;p&gt;Ставим зависимости в &lt;code&gt;/etc/portage/package.use/custom&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;mail-mta/postfix dovecot-sasl ldap
+net-mail/dovecot ldap
+net-nds/openldap ssl&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Устанавливаем&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;emerge postfix dovecot openldap
+dispatch-conf&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;LDAP&lt;/h3&gt;
+&lt;p&gt;Настраиваем LDAP &lt;code&gt;/etc/openldap/slapd.conf&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;## Включаем схемы:
+include         /etc/openldap/schema/core.schema
+include         /etc/openldap/schema/cosine.schema
+
+include         /etc/openldap/schema/inetorgperson.schema
+include         /etc/openldap/schema/java.schema
+
+include         /etc/openldap/schema/openldap.schema
+include         /etc/openldap/schema/nis.schema
+include         /etc/openldap/schema/corba.schema
+include         /etc/openldap/schema/dyngroup.schema
+include         /etc/openldap/schema/misc.schema
+include         /etc/openldap/schema/pmi.schema
+
+## Включаем аутентификацию
+moduleload      back_passwd.so
+moduleload      back_ldap.so
+
+## Пишем корень и супергероя
+database        hdb
+suffix          &amp;quot;dc=company, dc=local&amp;quot;
+rootdn          &amp;quot;cn=Manager, dc=company, dc=local&amp;quot;
+rootpw          super-hero-passwd
+
+## Расписываем индексы (чтобы быстрее искало и в логах не ругалось)
+index   objectClass     eq
+index   uid             eq
+index   cn              eq,sub
+index   mail            eq,sub
+index   sn              eq,sub
+index   givenName       eq,sub
+index   displayName     eq,sub&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Прописываем в автозагрузку и запускаем&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;/etc/init.d/slapd restart
+rc-update add slapd default&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Сразу проверяем, можем ли мы цепанутся к LDAP с винды: прописываем ip хоста, base &lt;code&gt;dc=company,dc=local&lt;/code&gt;,
+юзера &lt;code&gt;cn=Manager, dc=company, dc=local&lt;/code&gt; и пароль &lt;code&gt;super-hero-passwd&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Создаем раздел Users &lt;code&gt;objectClass=organizationUnit, ou=Users&lt;/code&gt;
+и там -  пару учеток - test1 и test2 &lt;code&gt;objectClass=posixAccount,intOrgPerson,top uid=test1@company.local&lt;/code&gt;
+ставим им пароль (правый клик, setPassword[CRYPT] в ldapAdmin)&lt;/p&gt;
+&lt;p&gt;Сразу делаем пользвателя который будет отвечать за нашу почту:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;useradd vmail&lt;/code&gt;&lt;/pre&gt;
+&lt;h3&gt;Dovecot&lt;/h3&gt;
+&lt;p&gt;Для начала создаем самоподписанный сертификат - переписваем из &lt;code&gt;/usr/share/doc/dovecot-2.1.15/&lt;/code&gt; себе в &lt;code&gt;/root&lt;/code&gt; пару файлов - &lt;code&gt;mkcert.sh&lt;/code&gt; и &lt;code&gt;dovecot-openssl.cnf&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Правим &lt;code&gt;dovecot-openssl.cnf&lt;/code&gt; запускаем &lt;code&gt;sh ./mkcert.sh&lt;/code&gt; - устаналиваем самоподписанные сертификаты&lt;/p&gt;
+&lt;p&gt;Правим &lt;code&gt;/etc/dovecot/conf.d/10-auth.conf&lt;/code&gt;, раскоментируем &lt;code&gt;!include auth-ldap.conf.ext&lt;/code&gt;, остальные инклуды ремарим&lt;/p&gt;
+&lt;p&gt;Правим &lt;code&gt;/etc/dovecot/conf.d/auth-ldap.conf.ext&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;passdb {
+  driver = ldap
+  args = /etc/dovecot/dovecot-ldap.conf.ext
+}
+userdb {
+  driver = static
+  args = uid=vmail gid=vmail home=/var/vmail/%d/%n
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Правим последний файл - &lt;code&gt;/etc/dovecot/dovecot-ldap.conf.ext&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;base = ou=Users,dc=company,dc=local
+user_attrs = %n,%Dd=user,home=/var/vmail/%d/%n/.maildir
+user_filter = (&amp;amp;(objectClass=posixAccount)(uid=%u))
+pass_attrs = mail=user,userPassword=password,userdb_home=/var/vmail/%d/%n/.maildir
+pass_filter = (&amp;amp;(objectClass=posixAccount)(uid=%u))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Все файлы просты и понятны. Конфиг сразу настраивается как мультидоменный, на всякий случай, т.е. юзер будет аутентифицироваться как test1@company.local, почта будет хранится в &lt;code&gt;/var/vmail/company.local/test1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;С Dovecot закончили. Отрезаем кусок, скажем в 30Гб, у LVM, и монтируем его в /var/vmail&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;vgcreate vg /dev/md2
+lvcreate -nvmail -L30G vg
+mkfs.ext4 /dev/vg/vmail
+mkdir /dev/vmail
+mount /dev/vg/vmail /var/vmail&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Не забываем прописать в &lt;code&gt;/etc/fstab&lt;/code&gt;:
+&lt;code&gt;/dev/vg/vmail /var/vmail ext4 noatime 0 1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Запускаем, прописываем в автозагрузку и проверяем&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;rc-update add dovecot default
+/etc/init.d/dovecot restart&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Заходим в почтовый клиент, проверям, что подключилось нормально - писем нет, аутентификация прошла, в логах &lt;code&gt;/var/log/messages&lt;/code&gt; ошибок нет.&lt;/p&gt;
+&lt;h3&gt;Postfix&lt;/h3&gt;
+&lt;p&gt;&lt;code&gt;/etc/postfix/master.cf&lt;/code&gt;: добавляем одну строку&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;dovecot   unix  -       n       n       -       -       pipe
+        flags=DRhu user=vmail:vmail argv=/usr/libexec/dovecot/deliver -f ${sender} -d ${recipient}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;и в файл &lt;code&gt;/etc/postfix/main.cf&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;message_size_limit=99999999
+mailbox_size_limit=99999999
+smtpd_use_tls=yes
+smtpd_tls_cert_file=/etc/ssl/certs/dovecot.pem
+smtpd_tls_key_file=/etc/ssl/private/dovecot.pem
+
+virtual_mailbox_maps     = ldap:/etc/postfix/ldap_virtual_mailbox_maps.cf
+virtual_alias_maps       = hash:/etc/mail/aliases
+dovecot_destination_recipient_limit = 1
+
+local_transport = dovecot
+virtual_gid_maps = static:1000
+virtual_uid_maps = static:1000
+virtual_mailbox_base = /var/vmail
+virtual_mailbox_limit = 1000000000
+virtual_transport = dovecot
+
+myhostname = mailbox.company.local
+myorigin = $mydomain
+mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
+home_mailbox = .maildir/&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;На будущее: сделать алиазы тоже через LDAP, сейчас надо править &lt;code&gt;/etc/mail/aliases&lt;/code&gt; и делать &lt;code&gt;newaliases&lt;/code&gt;.
+Это происходит достаточно редко, поэтому я особо не заморачивался.&lt;/p&gt;
+&lt;p&gt;Опять же, запускаем, прописываем в автозагрузку:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;rc-update add postfix default
+/etc/init.d/postfix restart&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ставим пакет для простоты проверки: &lt;code&gt;emerge mailx&lt;/code&gt;, и проверям работу:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;date | mail test1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;В это время смотрим в логи &lt;code&gt;tail -f /var/log/messages&lt;/code&gt;, проверям что создался &lt;code&gt;/var/vmail/company.local/test1/.maildir&lt;/code&gt;, разбух на пару кило. Идем в почтовый клиент и проверяем почту от test1@company.local на test2@company.local.&lt;/p&gt;
+&lt;p&gt;Все хорошо.&lt;/p&gt;
+&lt;p&gt;Проверям как сервер справится с нагрузкой - гуглим &lt;a href=&quot;http://download.cnet.com/MultiMail/3000-2382_4-75325323.htm&quot;&gt;multimail&lt;/a&gt;. Ставим для начала пару потоков простым письмом, если все хорошо - ставим 10 потоков по 999 писем с большими вложениями - смотрим в это время на очередь к почте &lt;code&gt;postqueue -p | tail -1&lt;/code&gt;, загрузку системы &lt;code&gt;atop,iotop,htop&lt;/code&gt;, и одновременно смотрим на любимый почтовый клиент.&lt;/p&gt;
+&lt;p&gt;Все живы, все работает. Удаляем все каталоги в &lt;code&gt;/var/vmail/company.local/*&lt;/code&gt; (чтобы не перегружать почтовый клиент спамом)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Перезагружаемся&lt;/strong&gt;, не заходя в консоль убеждаемся что почта ходит, создаем третьего пользователя test3 через ldap, проверям что все у него хорошо. Выставляем сервер в инет, отправляем самому себе почту с личного почтового ящика и обратно, проверям на открытый релей.&lt;/p&gt;
+&lt;p&gt;Ну и поскольку это все ldap  - настраиваем общую адресную книгу в почтовых клиентах, а это уже задание на дом ::))&lt;/p&gt;
+&lt;/div&gt;&lt;/article&gt;&lt;footer&gt;&lt;section id=&quot;related&quot;&gt;&lt;h3&gt;Related Posts&lt;/h3&gt;&lt;nav class=&quot;linklist&quot;&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/ext4-nodejs-login&quot;&gt;Ext4. NodeJS. Login.&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/gentoo-softraid-lvm-kvm-1c&quot;&gt;Установка 1С под линукс в госте&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/hello&quot;&gt;This is a Blog Post&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/netzke-cucumber-selenium&quot;&gt;Автотесты Netzke в браузере&lt;/a&gt;&lt;/li&gt;&lt;/nav&gt;&lt;/section&gt;&lt;/footer&gt;&lt;/section&gt;&lt;hr&gt;&lt;footer&gt;&lt;div&gt;© Your Company 2012&lt;/div&gt;&lt;div style=&quot;font-style:italic; font-size: 12px&quot;&gt;This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))&lt;/div&gt;&lt;/footer&gt;&lt;/div&gt;&lt;!-- Scripts--&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/prettify.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/jquery.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/twitter-bootstrap/js/bootstrap.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/log.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/modernizr.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/scripts/script.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;</content>
+    </entry>
+  
+    <entry>
+      <title>Автотесты Netzke в браузере</title>
+      <link href="http://website.com//posts/netzke-cucumber-selenium"/>
+      <updated>2013-04-18T05:07:21.000Z</updated>
+      <id>http://website.com//posts/netzke-cucumber-selenium</id>
+      <content type="html">&lt;!DOCTYPE html&gt;&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;!-- Meta--&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta http-equiv=&quot;content-type&quot; content=&quot;text/html; charset=utf-8&quot;&gt;&lt;meta http-equiv=&quot;X-UA-Compatible&quot; content=&quot;IE=edge,chrome=1&quot;&gt;&lt;title&gt;Автотесты Netzke в браузере | Your Website&lt;/title&gt;&lt;meta name=&quot;description&quot; content=&quot;When your website appears in search results in say Google, the text here will be shown underneath your website's title.&quot;&gt;&lt;meta name=&quot;keywords&quot; content=&quot;place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website&quot;&gt;&lt;meta name=&quot;author&quot; content=&quot;Your Name&quot;&gt;&lt;meta http-equiv=&quot;X-Powered-By&quot; content=&quot;DocPad&quot;/&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width&quot;&gt;&lt;!-- Icons--&gt;&lt;link rel=&quot;shortcut icon&quot; href=&quot;ico/favicon.ico&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;144x144&quot; href=&quot;ico/apple-touch-icon-144-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;114x114&quot; href=&quot;ico/apple-touch-icon-114-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; sizes=&quot;72x72&quot; href=&quot;ico/apple-touch-icon-72-precomposed.png&quot;&gt;&lt;link rel=&quot;apple-touch-icon-precomposed&quot; href=&quot;ico/apple-touch-icon-57-precomposed.png&quot;&gt;&lt;!--[if lt IE 9]&gt;&lt;script async src=&quot;http://html5shim.googlecode.com/svn/trunk/html5.js&quot;&gt;&lt;/script&gt;&lt;![endif]--&gt;&lt;!-- Styles--&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/prettify.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/vendor/twitter-bootstrap/css/bootstrap-responsive.css&quot; /&gt;&lt;link  rel=&quot;stylesheet&quot; href=&quot;/styles/style.css&quot; /&gt;&lt;/head&gt;&lt;body&gt;&lt;!-- Markup--&gt;&lt;div class=&quot;navbar navbar-fixed-top&quot;&gt;&lt;div class=&quot;navbar-inner&quot;&gt;&lt;div class=&quot;container&quot;&gt;&lt;a href=&quot;/&quot; class=&quot;brand&quot;&gt;Welcome&lt;/a&gt;&lt;ul class=&quot;nav&quot;&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/hello&quot;&gt;&lt;a href=&quot;/pages/hello&quot; property=&quot;dc:title&quot;&gt;This is a Page&lt;/a&gt;&lt;/li&gt;&lt;li typeof=&quot;sioc:Page&quot; about=&quot;/pages/posts&quot;&gt;&lt;a href=&quot;/pages/posts&quot; property=&quot;dc:title&quot;&gt;Posts&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=&quot;container&quot;&gt;&lt;section id=&quot;content&quot; class=&quot;content&quot;&gt;&lt;article id=&quot;post&quot; class=&quot;post&quot;&gt;&lt;h1&gt;Автотесты Netzke в браузере&lt;/h1&gt;&lt;div class=&quot;post-content&quot;&gt;&lt;p&gt;Создание начальной оболочки для тестирования формы входа. Написана с высоты двухнедельного изучения ruby и Netzke. Сдалано топорно.
+&lt;img src=&quot;/images/2011-02-16-1.png&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;По мотивам&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://blog.writelesscode.com/blog/2011/01/27/testing-extjs-rails-components-with-cucumber-and-webdriver-in-netzke/&quot;&gt;Testing Ext JS/Rails components with Cucumber and WebDriver in Netzke&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;http://habrahabr.ru/blogs/webdev/111480&quot;&gt;Rails - Хватит отмазываться, начинаем BDD-ить!&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Весь код примера доступен на &lt;a href=&quot;https://github.com/arrrght/netzke-test-1&quot;&gt;GitHub&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Создаем новый проект&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ rails new netzke-test-1
+    create  
+    create  README
+    create  Rakefile
+    create  config.ru
+    create  .gitignore
+    ...
+$ cd netzke-test-1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Добавляем gems в файл Gemfile:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;source &amp;#39;http://rubygems.org&amp;#39;
+
+gem &amp;#39;rails&amp;#39;, &amp;#39;3.0.3&amp;#39;
+
+gem &amp;#39;sqlite3-ruby&amp;#39;, :require =&amp;gt; &amp;#39;sqlite3&amp;#39;
+gem &amp;#39;netzke-core&amp;#39;, :git =&amp;gt; &amp;quot;git://github.com/skozlov/netzke-core.git&amp;quot;
+gem &amp;#39;netzke-basepack&amp;#39;, :git =&amp;gt; &amp;quot;git://github.com/skozlov/netzke-basepack.git&amp;quot;
+gem &amp;#39;will_paginate&amp;#39;
+
+group :development, :test do
+  gem &amp;quot;cucumber-rails&amp;quot;
+  gem &amp;quot;rspec-rails&amp;quot;
+end
+
+group :test do
+  gem &amp;quot;capybara&amp;quot;
+  gem &amp;quot;launchy&amp;quot;
+  gem &amp;quot;database_cleaner&amp;quot;
+  gem &amp;quot;selenium-webdriver&amp;quot;
+end&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;... и устанавливаем их:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ bundle install
+Updating git://github.com/skozlov/netzke-core.git
+Updating git://github.com/skozlov/netzke-basepack.git
+Fetching source index for http://rubygems.org/
+Using rake (0.8.7) 
+Using abstract (1.0.0) 
+Using activesupport (3.0.3) 
+Using builder (2.1.2) 
+...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Делаем линки на скаченные библиотеки &lt;a href=&quot;http://www.sencha.com/products/extjs/download/&quot;&gt;ExtJS&lt;/a&gt; и &lt;a href=&quot;http://www.famfamfam.com/lab/icons/silk/&quot;&gt;иконки&lt;/a&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ ln -s ~/Library/mylibs/ext-3.3.1 public/extjs
+$ ln -s ~/Library/mylibs/famfamfam_silk_icons_v013/icons public/images/&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Добавляем в &lt;code&gt;/app/views/layout/application.rb&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;head&amp;gt;
+  &amp;lt;title&amp;gt;NetzkeTest1&amp;lt;/title&amp;gt;
+  &amp;lt;%%= netzke_init %&amp;gt;
+  &amp;lt;%%= csrf_meta_tag %&amp;gt;
+&amp;lt;/head&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Генерим оболочку:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ rails g rspec:install
+$ rails g cucumber:install --rspec --capybara&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Делаем чтобы тесты выполнялись красиво:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ echo &amp;#39;--colour --format documentation&amp;#39; &amp;gt; .rspec
+$ sed -i~ &amp;#39;s/progress/pretty/g&amp;#39; config/cucumber.yml&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Прописываем драйвер в тесты, для этого вписываем в &lt;code&gt;features/support/env.rb&lt;/code&gt; следующие строки:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Capybara.register_driver :selenium do |app|
+  Capybara::Driver::Selenium.new app, :browser =&amp;gt; :chrome
+end&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Пишем фичу в файле &lt;code&gt;features/login.feature&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Feature: Check login window
+In order to value
+As a role
+I want feature
+
+@javascript
+Scenario: Check window properties (and button Enter should be disabled by default)
+  Given I am on the login page
+  Then I should see &amp;quot;Login window&amp;quot;
+  And I should see &amp;quot;User&amp;quot;
+  And I should see &amp;quot;Password&amp;quot;
+  Then button &amp;quot;Enter&amp;quot; should be disabled
+  When I fill in &amp;quot;username&amp;quot; with &amp;quot;some&amp;quot;
+  And I fill in &amp;quot;password&amp;quot; with &amp;quot;somepass&amp;quot;
+  And I sleep 1 seconds
+  Then button &amp;quot;Enter&amp;quot; should be enabled
+
+@javascript
+Scenario: Check login
+  Given I have a user named &amp;quot;user1&amp;quot; with password &amp;quot;pass1&amp;quot;
+  And I am on the login page
+  When I fill in &amp;quot;username&amp;quot; with &amp;quot;wrong_user&amp;quot;
+  And I fill in &amp;quot;password&amp;quot; with &amp;quot;wrong_password&amp;quot;
+  And I press &amp;quot;Enter&amp;quot;
+  When I wait for the response from the server
+  And I sleep 1 seconds
+  Then I should see &amp;quot;Wrong!&amp;quot;
+  When I fill in &amp;quot;username&amp;quot; with &amp;quot;user1&amp;quot;
+  And I fill in &amp;quot;password&amp;quot; with &amp;quot;pass1&amp;quot;
+  And I press &amp;quot;Enter&amp;quot;
+  When I wait for the response from the server
+  And I sleep 1 seconds
+  Then I should see &amp;quot;Hello, user1!&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Что мы делаем:&lt;/p&gt;
+&lt;p&gt;В первом сценарии мы проверяем окно, которое должно появится, два поля и отключенная кнопка &amp;quot;Enter&amp;quot;, которая должна включится только если в первом и во втором поле что-либо есть.&lt;/p&gt;
+&lt;p&gt;И второй сценарий - при верных параметрах мы попадаем на страницу приветствия пользователя, а при неверных - сообщение об ошибке.&lt;/p&gt;
+&lt;p&gt;PS: Тест написано криво и его надо причесать, но для примера пойдет.&lt;/p&gt;
+&lt;p&gt;PPS: Понаставил пауз потому как не знаю как же дожидаться выполнения работы JS.&lt;/p&gt;
+&lt;p&gt;Запускаем тест &lt;code&gt;cucumber features&lt;/code&gt; и видим кучу ошибок. Самая первая из них:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Can&amp;#39;t find mapping from &amp;quot;the login page&amp;quot; to a path.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Генерируем контроллер и добавляем &lt;code&gt;action index&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ rails g controller login index
+    create  app/controllers/login_controller.rb
+    invoke  erb
+    create    app/views/login
+    ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Добавляем default route к нашей странице в файле &lt;code&gt;config/routes.rb&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;netzke
+match &amp;quot;login&amp;quot; =&amp;gt; &amp;quot;login#index&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Запускаем наш тест и видим, что он запнулся на том, что не видит окно.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Then I should see &amp;quot;Login window&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Это нормально, потому что мы его еще не написали.
+Теперь рисуем наше окно для входа в файле &lt;code&gt;app/views/login/index.html.erb&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;%%= netzke :login %&amp;gt;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;И сам компонент. Для этого создаем католог &lt;code&gt;app/components&lt;/code&gt; и файл &lt;code&gt;app/components/login.rb&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;# coding: utf-8
+class Login &amp;lt; Netzke::Base
+
+  js_base_class &amp;#39;Ext.Window&amp;#39;
+
+  def configuration
+    super.merge(
+      :title =&amp;gt; &amp;#39;Login window&amp;#39;,
+      :hidden =&amp;gt; false,
+      :width =&amp;gt; 350, :autoHeight =&amp;gt; true,
+      :closable =&amp;gt; false, :resizable =&amp;gt; false,
+      :items =&amp;gt; [{
+        :buttons =&amp;gt; [ :login.action ],
+        :xtype =&amp;gt; :form,
+        :frame =&amp;gt; true,
+        :defaultType =&amp;gt; :textfield,
+        :monitorValid =&amp;gt; true,
+        :defaults =&amp;gt; { :anchor =&amp;gt; &amp;#39;100%&amp;#39;, :allowBlank =&amp;gt; false },
+        :items =&amp;gt; [{
+          :name =&amp;gt; &amp;#39;username&amp;#39;,
+          :fieldLabel =&amp;gt; &amp;#39;User&amp;#39;
+        },{
+          :name =&amp;gt; &amp;#39;password&amp;#39;,
+          :fieldLabel =&amp;gt; &amp;#39;Password&amp;#39;,
+          :inputType =&amp;gt; :password
+        }]
+      }]
+    )
+  end
+
+  action :login, :text =&amp;gt; &amp;#39;Enter&amp;#39;, :icon =&amp;gt; :accept, :formBind =&amp;gt; true
+
+  js_method :on_login, &amp;lt;&amp;lt;-JS.l
+    function(){
+      var form = this.items.first().getForm();
+      if (form.isValid()){
+        this.login(form.getFieldValues());
+      }
+    }
+  JS
+
+  endpoint :login do |para|
+    user = User.find(:first, :conditions =&amp;gt; {
+      :login =&amp;gt; para[&amp;#39;username&amp;#39;],
+      :password =&amp;gt; para[&amp;#39;password&amp;#39;]
+    })
+    session[:user_id] = user.id unless user.nil?
+    { :get_answer =&amp;gt; !user.nil?  }
+  end
+
+  js_method :get_answer, &amp;lt;&amp;lt;-JS.l
+    function (ret){
+      if (ret == false) {
+        Ext.Msg.alert(&amp;#39;Wrong!&amp;#39;,&amp;#39;Wrong username or password&amp;#39;);
+      }else{
+        window.location = &amp;#39;/users&amp;#39;;
+      }
+    }
+  JS
+  end&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Строки 6-29: Описание окна.&lt;/li&gt;
+&lt;li&gt;Строка 31: Добавление action типа &amp;quot;кнопка&amp;quot; и привязывание к форме&lt;/li&gt;
+&lt;li&gt;Строки 33-40: Отправка формы на сервер&lt;/li&gt;
+&lt;li&gt;Строки 42-50: Проверка пароля на строне сервера (так делать нельзя - это только пример)&lt;/li&gt;
+&lt;li&gt;Строки 52-60: Приемка ответа от сервера и решения что же дальше&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Теперь cucumber ругается на непонятный ему шаг:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Undefined step: &amp;quot;button &amp;quot;Enter&amp;quot; should be disabled&amp;quot; (Cucumber::Undefined)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Отлично! Так давайте его и напишем в файле &lt;code&gt;features/step_definitions/my_netzke_steps.rb&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Then /^button &amp;quot;([^&amp;quot;]*)&amp;quot; should be enabled$/ do |arg1|
+  page.driver.browser.execute_script(&amp;lt;&amp;lt;-JS).should == true
+    var btn = Ext.ComponentMgr.all.filter(&amp;#39;text&amp;#39;, &amp;#39;#{arg1}&amp;#39;).filter(&amp;#39;type&amp;#39;,&amp;#39;button&amp;#39;).first();
+  return typeof(btn)!=&amp;#39;undefined&amp;#39; ? !btn.disabled : false
+  JS
+end
+
+Then /^button &amp;quot;([^&amp;quot;]*)&amp;quot; should be disabled$/ do |arg1|
+  page.driver.browser.execute_script(&amp;lt;&amp;lt;-JS).should == true
+    var btn = Ext.ComponentMgr.all.filter(&amp;#39;text&amp;#39;, &amp;#39;#{arg1}&amp;#39;).filter(&amp;#39;type&amp;#39;,&amp;#39;button&amp;#39;).first();
+    return typeof(btn)!=&amp;#39;undefined&amp;#39; ? btn.disabled : false
+  JS
+end&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;У нас готов первый полностью пройденный сценарий, на котором мы проверям окно входа и неактивную кнопку. Идем дальше. &lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Undefined step: &amp;quot;I have a user named &amp;quot;user1&amp;quot; with password &amp;quot;pass1&amp;quot;&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Система не знает как сделать пользователя - так подскажем, как это делается. Добавляем описание этого шага в &lt;code&gt;features/step_definitions/my_netzke_steps.rb&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Given /^I have a user named &amp;quot;([^&amp;quot;]*)&amp;quot; with password &amp;quot;([^&amp;quot;]*)&amp;quot;$/ do |arg1, arg2|
+  User.create!( :login =&amp;gt; arg1, :password =&amp;gt; arg2 )
+end&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;OMG! У нас нет модели! Cucumber говорит что &lt;code&gt;uninitialized constant User (NameError)&lt;/code&gt;. Создадим:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ rails g model User login:string password:string
+    invoke  active_record
+    create    db/migrate/20110214075142_create_users.rb
+    create    app/models/user.rb
+    invoke    rspec
+    create      spec/models/user_spec.rb
+$ rake db:migrate
+$ rake db:test:prepare
+...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Осталось два последних шага, которых не понимает cucumber: &lt;code&gt;When I wait for the response from the server&lt;/code&gt; и &lt;code&gt;I sleep (\d+) seconds&lt;/code&gt;. Напишем их в &lt;code&gt;features/step_definitions/my_netzke_steps.rb&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;When /^I wait for the response from the server$/ do
+  page.wait_until{ page.driver.browser.execute_script(&amp;quot;return !Ext.Ajax.isLoading();&amp;quot;) }
+end
+
+When /I sleep (\d+) seconds?/ do |arg1|
+  sleep arg1.to_i
+end&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;И наконец-то cucumber наткнулся &lt;code&gt;Then I should see &amp;quot;Hello, user1!&amp;quot;&lt;/code&gt; на нашу последнюю недописанную часть - то, что должно появится после входа в систему. Для этого создадим котроллер &lt;code&gt;users&lt;/code&gt;, в котором приветствуем пользователя:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;$ rails g controller users index&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;И default route &lt;code&gt;config/routes.rb&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;match &amp;quot;users&amp;quot; =&amp;gt; &amp;quot;users#index&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;И напишем в &lt;code&gt;app/views/users/index.html.erb&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Hello, &amp;lt;%%= User.find(session[:user_id]).login %&amp;gt;!&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Всё. Тесты пройдены - вход работет.&lt;/p&gt;
+&lt;/div&gt;&lt;/article&gt;&lt;footer&gt;&lt;section id=&quot;related&quot;&gt;&lt;h3&gt;Related Posts&lt;/h3&gt;&lt;nav class=&quot;linklist&quot;&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/ext4-nodejs-login&quot;&gt;Ext4. NodeJS. Login.&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/gentoo-softraid-lvm-kvm-1c&quot;&gt;Установка 1С под линукс в госте&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/hello&quot;&gt;This is a Blog Post&lt;/a&gt;&lt;/li&gt;&lt;li&gt;&lt;span&gt;Thu Apr 18 2013&lt;/span&gt; &amp;raquo;&amp;nbsp;&lt;a href=&quot;/posts/mailserver&quot;&gt;Linux, RAID, LVM, почта и LDAP (5-в-одном)&lt;/a&gt;&lt;/li&gt;&lt;/nav&gt;&lt;/section&gt;&lt;/footer&gt;&lt;/section&gt;&lt;hr&gt;&lt;footer&gt;&lt;div&gt;© Your Company 2012&lt;/div&gt;&lt;div style=&quot;font-style:italic; font-size: 12px&quot;&gt;This website was last updated at Thu Apr 18 2013 11:10:16 GMT+0600 (Уральское время (зима))&lt;/div&gt;&lt;/footer&gt;&lt;/div&gt;&lt;!-- Scripts--&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/prettify.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/jquery.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/twitter-bootstrap/js/bootstrap.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/log.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/vendor/modernizr.js&quot;&gt;&lt;/script&gt;&lt;script defer=&quot;defer&quot;  src=&quot;/scripts/script.js&quot;&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;</content>
+    </entry>
+  
+</feed>
