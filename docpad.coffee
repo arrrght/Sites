@@ -12,35 +12,34 @@ docpadConfig =
     # Specify some site properties
     site:
       # The production url of our website
-      url: "http://website.com"
+      url: "http://a3r.me"
 
       # Here are some old site urls that you would like to redirect from
       oldUrls: [
-        'www.website.com',
-        'website.herokuapp.com'
+        'www.a3r.me'
       ]
 
       # The default title of our website
-      title: "Your Website"
+      title: "a3r homepage"
 
       # The website description (for SEO)
       description: """
-        When your website appears in search results in say Google, the text here will be shown underneath your website's title.
+        A3r personal site.
         """
 
       # The website keywords (for SEO) separated by commas
       keywords: """
-        place, your, website, keywoards, here, keep, them, related, to, the, content, of, your, website
+        ext4, ext4js, sencha, login, 1c, raid, lvm, sysadmin, admin, netzke dap, linux, gentoo, calculate
         """
 
       # The website author's name
-      author: "Your Name"
+      author: "a3r"
 
       # The website author's email
-      email: "your@email.com"
+      email: "arrrght@gmail.com"
 
       # Your company's name
-      copyright: "© Your Company 2012"
+      copyright: "© A3r and company 2013"
 
 
     # Helper Functions
