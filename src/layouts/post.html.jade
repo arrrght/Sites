@@ -6,6 +6,7 @@ article#post.post
   h1= document.title
   .post-content!= content
 
+
 footer
   if document.relatedDocuments && document.relatedDocuments.length
     section#related
@@ -16,3 +17,17 @@ footer
             span= doc.date.toDateString()
             |  &raquo;&nbsp;
             a(href=doc.url)= doc.title
+div#disqus_thread
+script.
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+  var disqus_shortname = 'a3rme'; // required: replace example with your forum shortname
+  /* * * DON'T EDIT BELOW THIS LINE * * */
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+a(href="http://disqus.com", class="dsq-brlink")
+  text comments powered by
+  span.logo-disqus Disqus
+    
