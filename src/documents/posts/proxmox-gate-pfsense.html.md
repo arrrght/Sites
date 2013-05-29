@@ -118,7 +118,7 @@ GE3, GE15		14UP	(Wi-Fi)
 GE4, GE16		15UP	(IntraNet)
 
 QNAP
-IP:192.168.1.5, User: xxx, pass: [ADMIN]
+IP:192.168.1.5, User: xxx, pass: [PASS]
 
 Если сломалась Cisco 
 Настроить по примеру или восстановить из конфигурационного файла
