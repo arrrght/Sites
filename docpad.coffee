@@ -24,7 +24,7 @@ docpadConfig =
 
       # The website description (for SEO)
       description: """
-        A3r personal site.
+        a3r personal site.
         """
 
       # The website keywords (for SEO) separated by commas
@@ -39,7 +39,7 @@ docpadConfig =
       email: "arrrght@gmail.com"
 
       # Your company's name
-      copyright: "© A3r and company 2013"
+      copyright: "© a3r 2011-2013"
 
 
     # Helper Functions
@@ -109,6 +109,11 @@ docpadConfig =
         else
           next()
 
+  environments:
+    static:
+      plugins:
+        cleanurls:
+          enabled: false
 
 # Export our DocPad Configuration
 module.exports = docpadConfig

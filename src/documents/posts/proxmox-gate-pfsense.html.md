@@ -1,7 +1,8 @@
 ---
 title: Proxmox. Wheezy. pfSense. VLAN
 layout: post
-created_at: 29 мая 2011
+created_at: 29 мая 2013
+date: '2013-05-29'
 tags: ['post']
 kdpv: '/images/proxmox-logo.png'
 intro: Поднимаем Proxmox, настраиваем VLAN, устанавливаем pfSense, пишем документацию на "тот" случай.

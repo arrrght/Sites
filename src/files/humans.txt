@@ -3,10 +3,10 @@
 
 
 /* TEAM */
-  <your title>: <your name>
-  Site:
+  writer: Ivan U Zvokov
+  Site: a3r.me
   Twitter:
-  Location:
+  Location:Russia, Yekateriburg
 
 /* THANKS */
   Names (& URL):

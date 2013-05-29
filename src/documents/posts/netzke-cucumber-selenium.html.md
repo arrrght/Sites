@@ -1,6 +1,7 @@
 ---
 title: Автотесты Netzke в браузере
 created_at: 11 февраля 2011
+date: '2011-02-11'
 layout: post
 tags: ['post']
 urls: ['/blog/2011/netzke-cucumber-selenium.html']

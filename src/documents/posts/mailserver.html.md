@@ -1,7 +1,8 @@
 ---
 title: Linux, RAID, LVM, почта и LDAP (5-в-одном)
 layout: post
-created_at: 21 мая 2011
+created_at: 21 мая 2013
+date: '2013-05-21'
 tags: ['post']
 intro: Быстро-быстро делаем почтовый сервер на 4 винтах и управляем им c LDAP-клиента виндовой машины
 ---

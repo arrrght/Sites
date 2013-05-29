@@ -2,6 +2,7 @@
 title: Ext4. NodeJS. Login.
 layout: post
 created_at: 21 мая 2011
+date: '2011-05-21'
 tags: ['post']
 urls: ['ext4-nodejs-login.html']
 kdpv: '/images/2011-02-16-1.png'

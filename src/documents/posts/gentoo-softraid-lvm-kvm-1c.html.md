@@ -1,6 +1,7 @@
 ---
 title: Установка 1С под линукс в госте
 created_at: 8 февраля 2011
+date: '2011-02-08'
 layout: post
 tags: ['post']
 urls: ['/blog/2011/gentoo-softraid-lvm-kvm-1c.html']
