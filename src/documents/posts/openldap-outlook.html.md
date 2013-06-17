@@ -249,7 +249,7 @@ ldapadd -v -Dcn=Manager,dc=org,dc=com -wsecret < ./temp.ldif
 
 Все. Проверяем, прописываем в крон, оптимизируем.
 PS: Для того, чтобы отображалась организация в списке адресов Oulook, надо отпатчить файл `/etc/openldap/schema/core.schema`:
-Добавим 'company' - отдельное спасибо Microsoft, что она не обращает внимания на стандартную запись ```o```
+Добавим 'company' - отдельное спасибо Microsoft, что она не обращает внимания на стандартную запись ```o```, строка 120
 ```
 attributetype ( 2.5.4.10 NAME ( 'company' 'o' 'organizationName' )
         DESC 'RFC2256: organization this object belongs to'
