@@ -39,7 +39,7 @@ docpadConfig =
       email: "arrrght@gmail.com"
 
       # Your company's name
-      copyright: "© a3r 2011-2013"
+      copyright: "© a3r"
 
 
     # Helper Functions
@@ -112,6 +112,9 @@ docpadConfig =
   environments:
     static:
       plugins:
+        ghpages:
+          deployRemote: 'target'
+          deployBranch: 'master'
         cleanurls:
           enabled: false
 
